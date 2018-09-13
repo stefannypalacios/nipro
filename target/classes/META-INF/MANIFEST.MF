@@ -4,7 +4,7 @@ Implementation-Version: 0.0.1-SNAPSHOT
 Built-By: Karina
 Implementation-Vendor-Id: sv.com.nipro
 Build-Jdk: 1.8.0_73
-Implementation-URL: https://projects.spring.io/spring-boot/#/spring-bo
- ot-starter-parent/interfaz
+Implementation-URL: http://projects.spring.io/spring-boot/interfaz/
 Created-By: Maven Integration for Eclipse
+Implementation-Vendor: Pivotal Software, Inc.
 

@@ -1,25 +1,41 @@
 package sv.com.nipro.interfaz.controller;
 
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Component;
 
 import sv.com.nipro.interfaz.entities.User;
 import sv.com.nipro.interfaz.repository.UserRepository;
 
-import javax.validation.Valid;
-
-@RestController
+@ManagedBean(name = "userBean")
+@ViewScoped
+@Component
 public class UserController {
-
+	private List<User> users;
 	@Autowired
-	private UserRepository userRepository;
+	public UserRepository userService;
 
-	@GetMapping("/user")
-	public Page<User> getQuestions(Pageable pageable) {
-		return userRepository.findAll(pageable);
+	@PostConstruct
+	public void init() {
+		getUser();
+	}
+
+	public void getUser() {
+		users = userService.findAll();
+		System.out.println("user.. "+users);
+	}
+
+	public List<User> getUsers() {
+		return users;
+	}
+
+	public void setUsers(List<User> users) {
+		this.users = users;
 	}
 
 }
