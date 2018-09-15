@@ -8,6 +8,6 @@ public class RoutesController {
 
 	@GetMapping("/")
 	 public String index(){
-		 return "user";
+		 return "login";
 	 }
 }
