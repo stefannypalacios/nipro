@@ -7,7 +7,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class RoutesController {
 
 	@GetMapping("/")
-	 public String index(){
-		 return "login";
-	 }
+	public String index() {
+		return "login";
+	}
+	
+	@GetMapping("/prueba")
+	public String prueba() {
+		return "user";
+	}
 }

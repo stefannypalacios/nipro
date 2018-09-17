@@ -1,4 +1,31 @@
+body{
+	background: #d2d6de;
+}
+
 .login-box{
 	width: 360px;
 	margin: 7% auto;
+}
+
+.login-title{
+	font-size: 35px;
+    text-align: center;
+    margin-bottom: 25px;
+    font-weight: 300;
+}
+
+.login-title a{
+	color: #444;
+	text-decoration: none;
+}
+
+.login-body{
+	background: #fff;
+    padding: 70px 20px;
+    border-top: 0;
+    color: #666;
+}
+
+.ui-messages{
+	font-size: 13px;
 }

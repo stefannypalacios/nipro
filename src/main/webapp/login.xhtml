@@ -9,19 +9,46 @@
 		<meta charset="utf-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		
-		<h:outputStylesheet library="css" name="login.css"  />
-		
+
+		<h:outputStylesheet library="css" name="login.css" />
+
 		<title>Product</title>
 	</h:head>
 	<h:body>
 		<div class="ui-g">
 			<div class="ui-g-12">
 				<div class="login-box">
-					<p>Prueba</p>
+					<div class="login-title">
+						<a href="javascript:void(0)"> <b>NIPRO </b>Interfaz
+						</a>
+					</div>
+					<div class="login-body">
+						<h:form>
+							<div class="ui-g">
+								<div class="ui-g-12">
+									<p:inputText id="username" required="true" style="width: 98%"
+										placeholder="Usuario" label="Usuario" value="#{userController.user}"/>
+								</div>
+								<div class="ui-g-12">
+									<p:password id="password" required="true" style="width: 98%"
+										placeholder="Contraseña" label="Contraseña" value="#{userController.password}"/>
+								</div>
+								<DIV class="ui-g-12">
+									<p:messages id="msgs" />
+								</DIV>
+								
+								<div class="ui-g-12">
+									<p:commandButton value="Iniciar sesión" update="msgs" style="width: 100%"
+									actionListener="#{userController.login}"/>
+								</div>
+							</div>
+						</h:form>
+					</div>
 				</div>
 			</div>
 		</div>
+		
+		<p:growl id="growl" sticky="true" showDetail="true" life="3000" />
 	</h:body>
 </f:view>
 </html>
