@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 import sv.com.nipro.interfaz.entities.Token;
 
 @Repository
-public interface TokenRepository extends JpaRepository<Token, Integer> {
+public interface TokenRepository extends JpaRepository<Token, Integer>, TokenRepositoryCustom {
 }

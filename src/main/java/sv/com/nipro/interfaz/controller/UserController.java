@@ -6,12 +6,12 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 import sv.com.nipro.interfaz.entities.Token;
@@ -23,10 +23,10 @@ import sv.com.nipro.interfaz.utils.MessageUtil;
 import sv.com.nipro.interfaz.utils.PasswordUtils;
 import sv.com.nipro.interfaz.utils.TokenGenerator;
 
-@ViewScoped
+@Scope("singleton")
 @ManagedBean(name = "userController")
 @Controller
-public class UserController implements Serializable{
+public class UserController extends BaseBean implements Serializable{
 	private static final long serialVersionUID = 1L;
 
 	private static final Logger logger = Logger.getLogger(UserController.class);
@@ -65,7 +65,6 @@ public class UserController implements Serializable{
 				ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
 				logger.info(context.getRequestContextPath());
 				FacesContext.getCurrentInstance().getExternalContext().redirect("prueba");
-				//context.redirect(context.getRequestContextPath() + "download-page.jsf?product=" + product + "&version=" + version);
 				
 			}else{
 				MessageUtil.addErrorMessage("Usuario o contraseña incorrectos");
@@ -74,6 +73,10 @@ public class UserController implements Serializable{
 		} catch (Exception e) {
 			logger.error(e, e);
 		}
+	}
+	
+	public void prueba(){
+		isTokenActive("prueba:MTEwNDIxMDAwMjQzNDIxMzEwNDI0MTIxMjEyMw==");
 	}
 
 	public void getUserLst() {

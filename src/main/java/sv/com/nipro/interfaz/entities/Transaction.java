@@ -33,12 +33,13 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "transaction")
 @NamedQueries({
-    @NamedQuery(name = "Transaction.findAll", query = "SELECT t FROM Transaction t"),
+    @NamedQuery(name = "Transaction.findAll", query = "SELECT t FROM Transaction t ORDER BY t.createdAt DESC"),
     @NamedQuery(name = "Transaction.findByTransactionid", query = "SELECT t FROM Transaction t WHERE t.transactionid = :transactionid"),
-    @NamedQuery(name = "Transaction.findByMethod", query = "SELECT t FROM Transaction t WHERE t.method = :method"),
-    @NamedQuery(name = "Transaction.findByType", query = "SELECT t FROM Transaction t WHERE t.type = :type"),
+    @NamedQuery(name = "Transaction.findByMethod", query = "SELECT t FROM Transaction t WHERE t.method = :method ORDER BY t.createdAt DESC"),
+    @NamedQuery(name = "Transaction.findByType", query = "SELECT t FROM Transaction t WHERE t.type = :type ORDER BY t.createdAt DESC"),
     @NamedQuery(name = "Transaction.findByMessage", query = "SELECT t FROM Transaction t WHERE t.message = :message"),
-    @NamedQuery(name = "Transaction.findByCreatedAt", query = "SELECT t FROM Transaction t WHERE t.createdAt = :createdAt")})
+    @NamedQuery(name = "Transaction.findByCreatedAt", query = "SELECT t FROM Transaction t WHERE t.createdAt = :createdAt"),
+    @NamedQuery(name = "Transaction.findByTypeAndMethod", query = "SELECT t FROM Transaction t WHERE t.type = :type AND t.method = :method ORDER BY t.createdAt DESC")})
 public class Transaction implements Serializable {
 
     private static final long serialVersionUID = 1L;

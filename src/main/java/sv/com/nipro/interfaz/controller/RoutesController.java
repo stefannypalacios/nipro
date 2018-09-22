@@ -13,6 +13,6 @@ public class RoutesController {
 	
 	@GetMapping("/prueba")
 	public String prueba() {
-		return "user";
+		return "transaction";
 	}
 }

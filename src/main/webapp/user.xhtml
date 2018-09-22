@@ -9,6 +9,7 @@
 <ui:composition template="layout.xhtml">
 	<ui:define name="content">
 		<h:form id="form">
+			<p:commandButton value="Prueba" actionListener="#{userController.prueba}"/>
 			<p:panel header="User List">
 				<p:dataTable id="table" var="user" value="#{userController.users}">
 					<p:column>

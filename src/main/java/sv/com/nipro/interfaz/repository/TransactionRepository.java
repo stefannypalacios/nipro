@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 import sv.com.nipro.interfaz.entities.Transaction;
 
 @Repository
-public interface TransactionRepository extends JpaRepository<Transaction, Integer> {
+public interface TransactionRepository extends JpaRepository<Transaction, Integer>, TransactionRepositoryCustom {
 }
