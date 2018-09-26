@@ -36,14 +36,17 @@ public class UserController extends BaseBean implements Serializable{
 	private String password;
 	
 	@Autowired
-	public UserRepository userService;
+	private UserRepository userService;
 	
 	@Autowired
-	public TokenRepository tokenService;
+	private TokenRepository tokenService;
+	
+	@Autowired
+	private SessionController beanSession;
 
 	@PostConstruct
 	public void init() {
-		getUserLst();
+		//getUserLst();
 	}
 	
 	public void login() {
@@ -61,6 +64,9 @@ public class UserController extends BaseBean implements Serializable{
 				tk.setCreatedAt(new Timestamp(System.currentTimeMillis()));
 				
 				tokenService.save(tk);
+				
+				beanSession.setToken(tk);
+				beanSession.setUserInSession(u);
 				
 				ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
 				logger.info(context.getRequestContextPath());
