@@ -34,7 +34,7 @@ public class TransactionController extends BaseBean implements Serializable{
 	public void init() {
 		logger.info("******************init*********************");
 		fillTransactionLst();
-		lstTransaction.get(0).getArchiveList();
+		//lstTransaction.get(0).getArchiveList();
 	}
 
 	public void fillTransactionLst() {
