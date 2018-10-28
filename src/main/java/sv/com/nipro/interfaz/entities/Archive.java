@@ -138,7 +138,7 @@ public class Archive implements Serializable {
 
     @Override
     public String toString() {
-        return "enterprise.web_jpa_war.entity.Archive[ archiveid=" + archiveid + " ]";
+        return "Archive[ archiveid=" + archiveid + " ]";
     }
     
 }

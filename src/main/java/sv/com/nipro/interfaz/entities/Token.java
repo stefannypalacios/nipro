@@ -159,7 +159,7 @@ public class Token implements Serializable {
 
     @Override
     public String toString() {
-        return "enterprise.web_jpa_war.entity.Token[ tokenid=" + tokenid + " ]";
+        return "Token[ tokenid=" + tokenid + " ]";
     }
     
 }

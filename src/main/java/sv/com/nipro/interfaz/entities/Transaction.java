@@ -167,7 +167,7 @@ public class Transaction implements Serializable {
 
     @Override
     public String toString() {
-        return "enterprise.web_jpa_war.entity.Transaction[ transactionid=" + transactionid + " ]";
+        return "Transaction[ transactionid=" + transactionid + " ]";
     }
     
 }
