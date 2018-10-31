@@ -5,7 +5,7 @@ import java.io.File;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
-import sv.com.nipro.interfaz.entities.Samples;
+import sv.com.nipro.interfaz.dto.Samples;
 
 public class XMLProcessor {
 	public Samples XMLToObject(String path) {

@@ -13,7 +13,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import sv.com.nipro.interfaz.entities.Agent;
+import sv.com.nipro.interfaz.dto.Agent;
 import sv.com.nipro.interfaz.utils.Constans;
 
 public class TestRead {

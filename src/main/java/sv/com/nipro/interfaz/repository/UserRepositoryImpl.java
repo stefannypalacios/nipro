@@ -22,6 +22,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom{
 
 	@Override
 	public User findByTypeAndUserAndPwd(String type, String user, String password) {
+		System.out.println("Parametros:: "+type +" - "+user +" - "+password);
 		Query query = null;
 		User obj = null;
 		
@@ -34,6 +35,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom{
 			obj = (User) query.getSingleResult();
 			
 		} catch (NoResultException nre) {
+			nre.printStackTrace();
 			logger.error(nre);
 		}catch (Exception e) {
 			logger.error(e, e);

@@ -1,4 +1,4 @@
-package sv.com.nipro.interfaz.entities;
+package sv.com.nipro.interfaz.dto;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
