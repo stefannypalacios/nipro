@@ -1,5 +1,6 @@
 package sv.com.nipro.interfaz.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Hl7DTO {
@@ -8,6 +9,11 @@ public class Hl7DTO {
 	private String ORC;
 	private String OBR;
 	private List<String> OBXLlst;
+	
+	public Hl7DTO() {
+		OBXLlst = new ArrayList<String>();
+	}
+	
 	public String getMSH() {
 		return MSH;
 	}
