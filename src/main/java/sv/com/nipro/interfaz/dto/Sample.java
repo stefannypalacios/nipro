@@ -5,6 +5,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "sample")
 public class Sample {
+	private String DATE;
 	private String RBC;
 	private String RBC_L;
 	private String RBC_H;
@@ -71,6 +72,15 @@ public class Sample {
 	private String GR;
 	private String GR_L;
 	private String GR_H;
+	
+	public String getDATE() {
+		return DATE;
+	}
+	
+	@XmlAttribute(name = "DATE")
+	public void setDATE(String dATE) {
+		DATE = dATE;
+	}
 
 	public String getRBC() {
 		return RBC;
