@@ -68,7 +68,9 @@ public class XMLProcessor {
 			
 			//Segmento OBR
 			
-			
+			hl7.setOBR(hl7.getOBR().replace("{COD_EMPLEADO}", employee.getCode()));
+			hl7.setOBR(hl7.getOBR().replace("{EMPLEADO}", employee.getName() + " " + employee.getSurname()));
+			hl7.setOBR(hl7.getOBR().replace("{ID_EXAMEN_SOL}", "74036")); //No estoy seguro si cambia (siempre es examen de sangre)
 			//Fin segmento OBR
 			
 			
@@ -97,6 +99,8 @@ public class XMLProcessor {
 				
 				Date date = formatter.parse(s.getDATE());				
 				hl7.setMSH(hl7.getMSH().replace("{FECHA_GEN}", fmtHL7.format(date))); //Sección en MSH
+				hl7.setOBR(hl7.getOBR().replace("{FECHA_RP_FINAL}", fmtHL7.format(date))); //Sección OBR
+				hl7.setOBR(hl7.getOBR().replace("{FECHA_GENERADO}", fmtHL7.format(date))); //Sección OBR
 				
 				
 				for (Element element : lstEl) {
