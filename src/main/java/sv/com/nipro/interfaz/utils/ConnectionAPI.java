@@ -5,6 +5,8 @@
  */
 package sv.com.nipro.interfaz.utils;
 
+import static org.springframework.http.HttpHeaders.USER_AGENT;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -26,24 +28,20 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import static org.springframework.http.HttpHeaders.USER_AGENT;
-
 /**
  *
  * @author Karina Palacios
  */
 public class ConnectionAPI {
-
-    private static final String URL = "";
     
     public String soapURLConnection(String messageReq, String wsReq) throws IOException, SAXException, ParserConfigurationException {
         System.out.println("soapClient " + wsReq + " - " + messageReq);
-        if (URL != null && !"".equals(URL)) {
-            java.net.URL url = new java.net.URL(URL);
+        if (Constans.URL_WS != null && !"".equals(Constans.URL_WS)) {
+            java.net.URL url = new java.net.URL(Constans.URL_WS);
             java.net.URLConnection conn = url.openConnection();
 
             // Set the necessary header fields
-            conn.setRequestProperty("SOAPAction", URL.concat("#").concat(wsReq));
+            conn.setRequestProperty("SOAPAction", Constans.URL_WS.concat("#").concat(wsReq));
             conn.setDoOutput(true);
 
             // Send the request
@@ -74,6 +72,17 @@ public class ConnectionAPI {
         String resp = doc.getElementsByTagName("return") != null ? doc.getElementsByTagName("return").item(0).getTextContent() : "";
         return resp;
     }
+    
+    public String soapMessage(String msg) {
+        String message
+                = "<soapenv:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tran=\"https://qaconectividad.credix.com/webservices/ws/transactions\">  "
+                + "<soapenv:Header/>   "
+                + "<soapenv:Body>      "
+                + "</soapenv:Body>"
+                + "</soapenv:Envelope>";
+
+        return message;
+    }
 
 	public String connection(String nameController, String body) throws UnsupportedEncodingException {
 
@@ -83,7 +92,7 @@ public class ConnectionAPI {
 
 		try {
 			CloseableHttpClient client = HttpClientBuilder.create().build();
-			HttpPost post = new HttpPost(URL + nameController);
+			HttpPost post = new HttpPost(Constans.URL_WS + nameController);
 			post.setHeader("Content-type", "application/json");
 			post.setHeader("User-Agent", USER_AGENT);
 			post.setEntity(new StringEntity(body));

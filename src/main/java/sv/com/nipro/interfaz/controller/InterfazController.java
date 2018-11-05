@@ -85,7 +85,8 @@ public class InterfazController extends BaseBean {
 					String hl7toSend = "";
 					
 					//Envío HL7
-					new ConnectionAPI().soapURLConnection("", "");
+					String messege = new ConnectionAPI().soapMessage("");
+					new ConnectionAPI().soapURLConnection(messege, "");
 					
 					
 					//Creando archivo

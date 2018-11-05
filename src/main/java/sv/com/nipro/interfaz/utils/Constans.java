@@ -1,9 +1,7 @@
 package sv.com.nipro.interfaz.utils;
 
 public class Constans {
-//	public static String FILE_PATH = "C:\\BM-105247-S-20180920.txt";
-	public static String FILE_PATH = "C:\\Users\\osegueda\\Documents\\nipro-docs\\BouleDataInterface\\BM800_Data\\BM-105247_2018-10-22.xml";
-	
+
 	public static String PDW_SALT = "~q)gb%H+<vmLTe]Xx7m%u&DO--&P6I<YvE|utbd6V60lGRO#fq;Z)$Jr1S-zqyH{";
 	
 	public static String PORTAL_USER = "WEB";
@@ -26,4 +24,11 @@ public class Constans {
 	//ID del resultado cualitativo SEPS
 	public static String OBX_1 = "OBX|1|ST|195|{ID_RESULTADO}|{RESULTADO}\n";	
 	public static String OBX = "OBX|{AUTOINCREMENTO}|NM|{ID_AGENTE}^{AGENTE}|Instrumento|{VALOR_R}|{UNIDAD}|{R_SUP} - {R_INF}||||F|||{FECHA_RESULT}\n";
+	
+	/**
+	 * TODO:: Se deben de moficar
+	 */
+	public static final String URL_WS = "";
+	public static final String FILE_PATH = "C:\\Users\\osegueda\\Documents\\nipro-docs\\BouleDataInterface\\BM800_Data\\BM-105247_2018-10-22.xml";
+
 }
