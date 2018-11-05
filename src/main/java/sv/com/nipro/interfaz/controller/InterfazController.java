@@ -122,7 +122,7 @@ public class InterfazController extends BaseBean {
 				
 			} else {
 				//Token no válido
-				response.setMessage("Cadena no válida");
+				response.setMessage("Permiso denegado");
 				response.setStatus(false);
 			}
 			
