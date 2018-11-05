@@ -35,7 +35,6 @@ public class UserRepositoryImpl implements UserRepositoryCustom{
 			obj = (User) query.getSingleResult();
 			
 		} catch (NoResultException nre) {
-			nre.printStackTrace();
 			logger.error(nre);
 		}catch (Exception e) {
 			logger.error(e, e);

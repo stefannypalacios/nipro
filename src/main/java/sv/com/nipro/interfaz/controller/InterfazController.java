@@ -57,7 +57,7 @@ public class InterfazController extends BaseBean {
 				response.setToken(TokenGenerator.generateToken(interfaz.getAppUser()));
 				
 				tk.setUserid(user);
-				tk.setToken(TokenGenerator.generateToken(user.getUsername()));
+				tk.setToken(response.getToken());
 				tk.setLastUsage(new Timestamp(System.currentTimeMillis()));
 				tk.setStatus(true);
 				tk.setCreatedAt(new Timestamp(System.currentTimeMillis()));
@@ -88,6 +88,7 @@ public class InterfazController extends BaseBean {
 					response.setMessage("OK");
 					response.setStatus(true);
 					
+					/*
 					String[] hl7 = interfaz.getMessage().split(System.getProperty("line.separator"));
 					String msh = hl7[0];
 					String orc = hl7[3];
@@ -104,7 +105,8 @@ public class InterfazController extends BaseBean {
 					//Envío HL7
 					String messege = new ConnectionAPI().soapMessage("");
 					new ConnectionAPI().soapURLConnection(messege, "");
-					
+					*/
+					String idSolicitud = "XXXX";
 					
 					//Creando archivo
 					File fileHl7 = new File("/solicitud_" + idSolicitud + ".txt");
