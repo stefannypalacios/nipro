@@ -24,8 +24,7 @@ import sv.com.nipro.interfaz.dto.Response;
 import sv.com.nipro.interfaz.dto.ResponseCheckin;
 import sv.com.nipro.interfaz.entities.User;
 import sv.com.nipro.interfaz.repository.UserRepository;
-import sv.com.nipro.interfaz.repository.UserRepositoryCustom;
-import sv.com.nipro.interfaz.repository.UserRepositoryImpl;
+import sv.com.nipro.interfaz.utils.ConnectionAPI;
 import sv.com.nipro.interfaz.utils.Constans;
 import sv.com.nipro.interfaz.utils.TokenGenerator;
 
@@ -86,6 +85,8 @@ public class InterfazController extends BaseBean {
 					String hl7toSend = "";
 					
 					//Envío HL7
+					new ConnectionAPI().soapURLConnection("", "");
+					
 					
 					//Creando archivo
 					File fileHl7 = new File("/solicitud_" + idSolicitud + ".txt");
