@@ -1,5 +1,9 @@
 package sv.com.nipro.interfaz.controller;
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 import javax.faces.bean.ManagedBean;
 
 import org.joda.time.DateTime;
@@ -16,7 +20,7 @@ public class BaseBean {
 
 	public BaseBean() {	}
 	
-	public boolean isTokenActive(String token){
+	public boolean isTokenActive(String token, int validMinutes){
 		
 		Token t;
 		if (tokenService != null){
@@ -31,17 +35,32 @@ public class BaseBean {
 				    int numberOfMinutes = minutes.getMinutes();
 				    
 				    System.out.println("**************" + numberOfMinutes + "**************");
-				    if (numberOfMinutes >= 30){
+				    if (numberOfMinutes >= validMinutes){
 				    	t.setStatus(false);
 				    	tokenService.save(t);
 				    }
 				    
-				    return (numberOfMinutes < 30);
+				    return (numberOfMinutes < validMinutes);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 		return false;
+	}
+	
+	public boolean matchingMessage(String msgOrig, String msgCompare){
+	    String md5 = null;
+	    try{
+	        MessageDigest md = MessageDigest.getInstance("MD5");
+	        md.update(msgCompare.getBytes());
+	        byte[] digest = md.digest();
+	        md5 = new BigInteger(1, digest).toString(16);
+
+	        return md5.equals(msgOrig);
+
+	    } catch (NoSuchAlgorithmException e) {
+	        return false;
+	    }
 	}
 }

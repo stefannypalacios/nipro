@@ -1,5 +1,8 @@
 package sv.com.nipro.interfaz.controller;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,7 +31,7 @@ import sv.com.nipro.interfaz.utils.TokenGenerator;
 
 @RestController
 @CrossOrigin("*")
-public class InterfazController {
+public class InterfazController extends BaseBean {
 	
 	@Autowired
 	private UserRepository repository;
@@ -62,19 +65,48 @@ public class InterfazController {
 
 		Response response = new Response();
 		try {
-			if (true) { // si token es valido, mensaje y md5 mensaje
-				response.setMessage("OK");
-				response.setStatus(true);
-			} else if (true) { // cadena no valido
-				response.setMessage("Cadena no válida"); // concatenar cadena
-				response.setStatus(false);
-			} else if (true) { // token no valido
-				response.setMessage("Permiso denegado");
-				response.setStatus(false);
-			} else if (true) { // Checksum no valido
+			if (isTokenActive(interfaz.getToken(), 2)) { // si token es valido, mensaje y md5 mensaje
+				
+				if (matchingMessage(interfaz.getChecksum(), interfaz.getMessage())) {
+					//mensaje válido
+					response.setMessage("OK");
+					response.setStatus(true);
+					
+					String[] hl7 = interfaz.getMessage().split(System.getProperty("line.separator"));
+					String msh = hl7[0];
+					String orc = hl7[3];
+					
+					//datos necesarios
+					String idSolicitud = orc.split("|")[2];
+					String suministranteAll = msh.split("|")[5];
+					String suministrante = suministranteAll.split("^")[1];
+					String idSuministrante = suministranteAll.split("^")[0];
+					
+					//Generar HL7
+					String hl7toSend = "";
+					
+					//Envío HL7
+					
+					//Creando archivo
+					File fileHl7 = new File("/solicitud_" + idSolicitud + ".txt");
+					BufferedWriter bw;
+					if(!fileHl7.exists()) {
+						bw = new BufferedWriter(new FileWriter(fileHl7));
+						bw.write(interfaz.getMessage());
+					}
+					
+				}else {
+					// cadena no válida
+					response.setMessage("Cadena no válida"); // concatenar cadena
+					response.setStatus(false);
+				}				
+				
+			} else {
+				//Token no válido
 				response.setMessage("Cadena no válida");
 				response.setStatus(false);
 			}
+			
 		} catch (Exception ex) {
 			Logger.getLogger(InterfazController.class.getName()).log(Level.SEVERE, null, ex);
 		}

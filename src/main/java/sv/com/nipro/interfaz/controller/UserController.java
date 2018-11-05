@@ -82,7 +82,9 @@ public class UserController extends BaseBean implements Serializable{
 	}
 	
 	public void prueba(){
-		isTokenActive("prueba:MTEwNDIxMDAwMjQzNDIxMzEwNDI0MTIxMjEyMw==");
+		isTokenActive("prueba:MTEwNDIxMDAwMjQzNDIxMzEwNDI0MTIxMjEyMw==", 30);
+		logger.info("************************");
+		logger.info(matchingMessage("d077f244def8a70e5ea758bd8352fcd8", "cat"));
 	}
 
 	public void getUserLst() {
