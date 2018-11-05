@@ -56,16 +56,13 @@ public class InterfazController extends BaseBean {
 				response.setStatus(true);
 				response.setToken(TokenGenerator.generateToken(interfaz.getAppUser()));
 				
-				User u = repository.findByTypeAndUserAndPwd(Constans.USER_TYPE_REST, interfaz.getAppUser(),
-						PasswordUtils.generateSecurePassword(interfaz.getPassword(), Constans.PDW_SALT));
-				
-				tk.setUserid(u);
-				tk.setToken(TokenGenerator.generateToken(u.getUsername()));
+				tk.setUserid(user);
+				tk.setToken(TokenGenerator.generateToken(user.getUsername()));
 				tk.setLastUsage(new Timestamp(System.currentTimeMillis()));
 				tk.setStatus(true);
 				tk.setCreatedAt(new Timestamp(System.currentTimeMillis()));
 				
-				tokenService.save(tk);
+				tokenRepository.save(tk);
 			} else {
 				response.setMessage("Credenciales no validas");
 				response.setStatus(false);
