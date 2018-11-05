@@ -38,9 +38,11 @@ public class BaseBean {
 
 					System.out.println("**************" + numberOfMinutes + "**************");
 					if (numberOfMinutes >= validMinutes) {
-						t.setStatus(false);
-						tokenService.save(t);
+						t.setStatus(false);						
+					}else {
+						t.setLastUsage(new Timestamp(System.currentTimeMillis()));
 					}
+					tokenService.save(t);
 
 					return (numberOfMinutes < validMinutes);
 				}
