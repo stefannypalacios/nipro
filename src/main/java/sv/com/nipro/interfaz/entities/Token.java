@@ -36,6 +36,7 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Token.findAll", query = "SELECT t FROM Token t"),
     @NamedQuery(name = "Token.findByTokenid", query = "SELECT t FROM Token t WHERE t.tokenid = :tokenid"),
     @NamedQuery(name = "Token.findByToken", query = "SELECT t FROM Token t WHERE t.token = :token"),
+    @NamedQuery(name = "Token.findByTokenActive", query = "SELECT t FROM Token t WHERE t.token = :token AND t.status = :status"),
     @NamedQuery(name = "Token.findByLastUsage", query = "SELECT t FROM Token t WHERE t.lastUsage = :lastUsage"),
     @NamedQuery(name = "Token.findByStatus", query = "SELECT t FROM Token t WHERE t.status = :status"),
     @NamedQuery(name = "Token.findByCreatedAt", query = "SELECT t FROM Token t WHERE t.createdAt = :createdAt")})

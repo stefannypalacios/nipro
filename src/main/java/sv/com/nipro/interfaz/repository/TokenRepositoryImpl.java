@@ -13,28 +13,49 @@ import sv.com.nipro.interfaz.entities.Token;
 
 @Repository
 @Transactional(readOnly = true)
-public class TokenRepositoryImpl implements TokenRepositoryCustom{
-private static final Logger logger = Logger.getLogger(TokenRepositoryImpl.class);
-	
+public class TokenRepositoryImpl implements TokenRepositoryCustom {
+	private static final Logger logger = Logger.getLogger(TokenRepositoryImpl.class);
+
 	@PersistenceContext
-    EntityManager entityManager;
+	EntityManager entityManager;
 
 	@Override
 	public Token findByToken(String token) {
 		Query query = null;
 		Token obj = null;
-		
+
 		try {
 			query = entityManager.createNamedQuery("Token.findByToken", Token.class);
 			query.setParameter("token", token);
-			
+
 			obj = (Token) query.getSingleResult();
-			
+
 		} catch (NoResultException nre) {
 			logger.error(nre);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.error(e, e);
-		}		
+		}
+		// Token.findByToken
+		return obj;
+	}
+
+	@Override
+	public Token findByTokenActive(String token, Boolean isActive) {
+		Query query = null;
+		Token obj = null;
+
+		try {
+			query = entityManager.createNamedQuery("Token.findByTokenActive", Token.class);
+			query.setParameter("token", token);
+			query.setParameter("status", isActive);
+
+			obj = (Token) query.getSingleResult();
+
+		} catch (NoResultException nre) {
+			logger.error(nre);
+		} catch (Exception e) {
+			logger.error(e, e);
+		}
 		// Token.findByToken
 		return obj;
 	}

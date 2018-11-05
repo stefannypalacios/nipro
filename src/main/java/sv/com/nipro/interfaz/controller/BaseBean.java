@@ -18,29 +18,30 @@ public class BaseBean {
 	@Autowired
 	public TokenRepository tokenService;
 
-	public BaseBean() {	}
-	
-	public boolean isTokenActive(String token, int validMinutes){
-		
+	public BaseBean() {
+	}
+
+	public boolean isTokenActive(String token, int validMinutes) {
+
 		Token t;
-		if (tokenService != null){
+		if (tokenService != null) {
 			try {
 				t = tokenService.findByToken(token);
-				
-				if (t != null){
+
+				if (t != null) {
 					DateTime startDate = new DateTime(t.getLastUsage().getTime());
 					DateTime endDate = new DateTime();
-					
+
 					Minutes minutes = Minutes.minutesBetween(startDate, endDate);
-				    int numberOfMinutes = minutes.getMinutes();
-				    
-				    System.out.println("**************" + numberOfMinutes + "**************");
-				    if (numberOfMinutes >= validMinutes){
-				    	t.setStatus(false);
-				    	tokenService.save(t);
-				    }
-				    
-				    return (numberOfMinutes < validMinutes);
+					int numberOfMinutes = minutes.getMinutes();
+
+					System.out.println("**************" + numberOfMinutes + "**************");
+					if (numberOfMinutes >= validMinutes) {
+						t.setStatus(false);
+						tokenService.save(t);
+					}
+
+					return (numberOfMinutes < validMinutes);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -48,19 +49,36 @@ public class BaseBean {
 		}
 		return false;
 	}
-	
-	public boolean matchingMessage(String msgOrig, String msgCompare){
-	    String md5 = null;
-	    try{
-	        MessageDigest md = MessageDigest.getInstance("MD5");
-	        md.update(msgCompare.getBytes());
-	        byte[] digest = md.digest();
-	        md5 = new BigInteger(1, digest).toString(16);
 
-	        return md5.equals(msgOrig);
+	public boolean inactiveToken(String token) {
+		Token t;
+		if (tokenService != null && token != null) {
+			try {
+				t = tokenService.findByTokenActive(token, true);
+				if (t != null) {
+					t.setStatus(false);
+					tokenService.save(t);
+					return true;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
 
-	    } catch (NoSuchAlgorithmException e) {
-	        return false;
-	    }
+	public boolean matchingMessage(String msgOrig, String msgCompare) {
+		String md5 = null;
+		try {
+			MessageDigest md = MessageDigest.getInstance("MD5");
+			md.update(msgCompare.getBytes());
+			byte[] digest = md.digest();
+			md5 = new BigInteger(1, digest).toString(16);
+
+			return md5.equals(msgOrig);
+
+		} catch (NoSuchAlgorithmException e) {
+			return false;
+		}
 	}
 }

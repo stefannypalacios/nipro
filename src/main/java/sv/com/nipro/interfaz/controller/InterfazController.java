@@ -60,7 +60,7 @@ public class InterfazController extends BaseBean {
 
 	@RequestMapping(value = "/acceptMessage", method = RequestMethod.POST)
 	public ResponseEntity acceptMessage(@RequestBody RequestAcceptMessage interfaz) {
-		System.out.println("checkin - RequestBody " + interfaz);
+		System.out.println("acceptMessage - RequestBody " + interfaz);
 
 		Response response = new Response();
 		try {
@@ -118,11 +118,11 @@ public class InterfazController extends BaseBean {
 
 	@RequestMapping(value = "/checkout", method = RequestMethod.POST)
 	public ResponseEntity checkout(@RequestBody RequestCheckout interfaz) {
-		System.out.println("checkin - RequestBody " + interfaz);
+		System.out.println("checkout - RequestBody " + interfaz);
 
 		Response response = new Response();
 		try {
-			if (true) { // si token es valido
+			if (inactiveToken(interfaz.getToken())) { // si token es valido
 				response.setMessage("Sesión de usuario finalizada con exito.");
 				response.setStatus(true);
 			} else {
