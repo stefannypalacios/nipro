@@ -46,11 +46,11 @@ public class InterfazController extends BaseBean {
 	@RequestMapping(value = "/checkin", method = RequestMethod.POST)
 	public ResponseEntity checkin(@RequestBody RequestCheckin interfaz) {
 		System.out.println("checkin - RequestBody " + interfaz);
-
+		
 		Token tk = new Token();
 		ResponseCheckin response = new ResponseCheckin();
 		try {
-			User user = getUser(interfaz.getAppUser(), interfaz.getPassword());
+			User user = getUser(interfaz.getAppUser(), PasswordUtils.generateSecurePassword(interfaz.getPassword(), Constans.PDW_SALT));
 			if (user != null && user.getUserid() != null && user.getUserid() != 0) {
 				response.setMessage("");
 				response.setStatus(true);
