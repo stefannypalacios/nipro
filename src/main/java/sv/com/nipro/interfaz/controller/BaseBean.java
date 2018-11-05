@@ -3,6 +3,7 @@ package sv.com.nipro.interfaz.controller;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Timestamp;
 
 import javax.faces.bean.ManagedBean;
 
@@ -56,6 +57,7 @@ public class BaseBean {
 			try {
 				t = tokenService.findByTokenActive(token, true);
 				if (t != null) {
+					t.setLastUsage(new Timestamp(System.currentTimeMillis()));
 					t.setStatus(false);
 					tokenService.save(t);
 					return true;
