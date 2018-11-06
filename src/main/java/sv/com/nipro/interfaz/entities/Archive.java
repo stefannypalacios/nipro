@@ -58,6 +58,9 @@ public class Archive implements Serializable {
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
+    @Column(name="patient_name")
+	private String patientName;
+	private String status;
     @JoinColumn(name = "transactionid", referencedColumnName = "transactionid")
     @ManyToOne(optional = false)
     private Transaction transactionid;
@@ -114,9 +117,25 @@ public class Archive implements Serializable {
 
     public void setTransactionid(Transaction transactionid) {
         this.transactionid = transactionid;
-    }
+    }     
 
-    @Override
+    public String getPatientName() {
+		return patientName;
+	}
+
+	public void setPatientName(String patientName) {
+		this.patientName = patientName;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	@Override
     public int hashCode() {
         int hash = 0;
         hash += (archiveid != null ? archiveid.hashCode() : 0);

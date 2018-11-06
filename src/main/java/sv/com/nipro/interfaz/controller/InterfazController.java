@@ -3,7 +3,10 @@ package sv.com.nipro.interfaz.controller;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,14 +21,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import sv.com.nipro.interfaz.entities.Archive;
 import sv.com.nipro.interfaz.dto.RequestAcceptMessage;
 import sv.com.nipro.interfaz.dto.RequestCheckin;
 import sv.com.nipro.interfaz.dto.RequestCheckout;
 import sv.com.nipro.interfaz.dto.Response;
 import sv.com.nipro.interfaz.dto.ResponseCheckin;
 import sv.com.nipro.interfaz.entities.Token;
+import sv.com.nipro.interfaz.entities.Transaction;
 import sv.com.nipro.interfaz.entities.User;
 import sv.com.nipro.interfaz.repository.TokenRepository;
+import sv.com.nipro.interfaz.repository.TransactionRepository;
 import sv.com.nipro.interfaz.repository.UserRepository;
 import sv.com.nipro.interfaz.utils.ConnectionAPI;
 import sv.com.nipro.interfaz.utils.Constans;
@@ -37,10 +43,11 @@ import sv.com.nipro.interfaz.utils.TokenGenerator;
 public class InterfazController extends BaseBean {
 	
 	@Autowired
-	private UserRepository repository;
-	
+	private UserRepository repository;	
 	@Autowired
 	private TokenRepository tokenRepository;
+	@Autowired
+	private TransactionRepository trRepository;
 	
 
 	@RequestMapping(value = "/checkin", method = RequestMethod.POST)
@@ -48,6 +55,7 @@ public class InterfazController extends BaseBean {
 		System.out.println("checkin - RequestBody " + interfaz);
 		
 		Token tk = new Token();
+		
 		ResponseCheckin response = new ResponseCheckin();
 		try {
 			User user = getUser(interfaz.getAppUser(), PasswordUtils.generateSecurePassword(interfaz.getPassword(), Constans.PDW_SALT));
@@ -78,7 +86,9 @@ public class InterfazController extends BaseBean {
 	@RequestMapping(value = "/acceptMessage", method = RequestMethod.POST)
 	public ResponseEntity acceptMessage(@RequestBody RequestAcceptMessage interfaz) {
 		System.out.println("acceptMessage - RequestBody " + interfaz);
-
+		
+		Transaction tr = new Transaction();
+		
 		Response response = new Response();
 		try {
 			if (isTokenActive(interfaz.getToken(), 2)) { // si token es valido, mensaje y md5 mensaje
@@ -87,7 +97,6 @@ public class InterfazController extends BaseBean {
 					//mensaje válido
 					response.setMessage("OK");
 					response.setStatus(true);
-					
 					/*
 					String[] hl7 = interfaz.getMessage().split(System.getProperty("line.separator"));
 					String msh = hl7[0];
@@ -108,13 +117,31 @@ public class InterfazController extends BaseBean {
 					*/
 					String idSolicitud = "XXXX";
 					
-					//Creando archivo
-					File fileHl7 = new File("/solicitud_" + idSolicitud + ".txt");
+					// Creando archivo
+					Path currentRelativePath = Paths.get("");
+					System.out.println(currentRelativePath.toAbsolutePath().toString());
+					
+					File fileHl7 = new File(
+							currentRelativePath.toAbsolutePath().toString() + "/solicitudes/solicitud_" + idSolicitud + ".txt");
 					BufferedWriter bw;
-					if(!fileHl7.exists()) {
+					//if (!fileHl7.exists()) {
 						bw = new BufferedWriter(new FileWriter(fileHl7));
 						bw.write(interfaz.getMessage());
-					}
+						bw.close();
+
+						Archive a = new Archive();
+						a.setType("SOLICITUD");
+						a.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+						a.setName(fileHl7.getName());
+						a.setPatientName("nombre");
+						a.setStatus("PENDING");
+						a.setTransactionid(tr);
+
+						List<Archive> lstA = new ArrayList<Archive>();
+						lstA.add(a);
+
+						tr.setArchiveList(lstA);
+					//}
 					
 				}else {
 					// cadena no válida
@@ -127,6 +154,14 @@ public class InterfazController extends BaseBean {
 				response.setMessage("Permiso denegado");
 				response.setStatus(false);
 			}
+			
+			tr.setMethod("acceptMessage");
+			tr.setType("INPUT");
+			tr.setTokenid(tokenRepository.findByToken(interfaz.getToken()));
+			tr.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+			tr.setMessage(response.getMessage());
+			trRepository.save(tr);
+			
 			
 		} catch (Exception ex) {
 			Logger.getLogger(InterfazController.class.getName()).log(Level.SEVERE, null, ex);
