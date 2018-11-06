@@ -136,6 +136,7 @@ public class InterfazController extends BaseBean {
 						a.setPatientName("nombre");
 						a.setStatus("PENDING");
 						a.setTransactionid(tr);
+						a.setSolicitudid(idSolicitud);
 
 						List<Archive> lstA = new ArrayList<Archive>();
 						lstA.add(a);

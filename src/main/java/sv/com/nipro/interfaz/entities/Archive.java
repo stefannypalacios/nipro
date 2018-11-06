@@ -61,6 +61,7 @@ public class Archive implements Serializable {
     @Column(name="patient_name")
 	private String patientName;
 	private String status;
+	private String solicitudid;
     @JoinColumn(name = "transactionid", referencedColumnName = "transactionid")
     @ManyToOne(optional = false)
     private Transaction transactionid;
@@ -133,6 +134,14 @@ public class Archive implements Serializable {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+	
+	public String getSolicitudid() {
+		return solicitudid;
+	}
+	
+	public void setSolicitudid(String solicitudid) {
+		this.solicitudid = solicitudid;
 	}
 
 	@Override
