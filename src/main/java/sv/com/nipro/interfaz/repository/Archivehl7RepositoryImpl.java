@@ -9,10 +9,13 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-import sv.com.nipro.interfaz.entities.Archive;
 import sv.com.nipro.interfaz.entities.Archivehl7;
 
+@Repository
+@Transactional(readOnly = true)
 public class Archivehl7RepositoryImpl implements Archivehl7RepositoryCustom {
 	private static final Logger logger = Logger.getLogger(Archivehl7RepositoryImpl.class);
 	
@@ -24,7 +27,7 @@ public class Archivehl7RepositoryImpl implements Archivehl7RepositoryCustom {
 		Query query = null;
 		Archivehl7 item = new Archivehl7();
 		try {
-			query = em.createNamedQuery("Archivehl7.findByResultid", Archive.class);
+			query = em.createNamedQuery("Archivehl7.findByResultid", Archivehl7.class);
 			query.setParameter("resultid", resultid);
 			item = (Archivehl7) query.getSingleResult();
 		} catch (Exception e) {
@@ -39,7 +42,7 @@ public class Archivehl7RepositoryImpl implements Archivehl7RepositoryCustom {
 		List<Archivehl7> lstItems = new ArrayList<Archivehl7>();
 
 		try {
-			query = em.createNamedQuery("Archivehl7.findByStatus", Archive.class);
+			query = em.createNamedQuery("Archivehl7.findByStatus", Archivehl7.class);
 			query.setParameter("status", status);
 			lstItems = (List<Archivehl7>) query.getResultList();
 			

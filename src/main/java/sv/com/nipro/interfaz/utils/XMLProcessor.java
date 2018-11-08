@@ -11,14 +11,21 @@ import java.util.List;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import sv.com.nipro.interfaz.controller.SessionController;
 import sv.com.nipro.interfaz.dto.Hl7DTO;
 import sv.com.nipro.interfaz.dto.Sample;
 import sv.com.nipro.interfaz.dto.Samples;
 import sv.com.nipro.interfaz.entities.Element;
 import sv.com.nipro.interfaz.entities.Employee;
 
-
+@Component
 public class XMLProcessor {
+	@Autowired
+	private SessionController session;
+	
 	public Samples XMLToObject(String path) {
 		Samples object = null;
 		try {
@@ -45,8 +52,8 @@ public class XMLProcessor {
 			//Segmento MSH
 			
 			//AMBOS CAMPOS ESTÁN PRESENTES EN LA SOLICITUD
-			hl7.setMSH(hl7.getMSH().replace("{SUMINISTRANTE_ID}", 11111111 + "")); //preguntar id asignado a nipro
-			hl7.setMSH(hl7.getMSH().replace("{SUMINISTRANTE}", "NIPRO")); //preguntar 			
+			hl7.setMSH(hl7.getMSH().replace("{SUMINISTRANTE_ID}", "{SUMINISTRANTE_ID}"));
+			hl7.setMSH(hl7.getMSH().replace("{SUMINISTRANTE}", "{SUMINISTRANTE}"));			
 			
 			
 			//Fin segmento MSH
@@ -61,15 +68,15 @@ public class XMLProcessor {
 			LocalDateTime now = LocalDateTime.now(); 
 			hl7.setORC(hl7.getORC().replace("{FECHA_ENVIO}", dtf.format(now)));
 			
-			hl7.setORC(hl7.getORC().replace("{COD_EMPLEADO}", employee.getCode()));
-			hl7.setORC(hl7.getORC().replace("{EMPLEADO}", employee.getName() + " " + employee.getSurname()));
+			hl7.setORC(hl7.getORC().replace("{COD_EMPLEADO}", "{COD_EMPLEADO}"));
+			hl7.setORC(hl7.getORC().replace("{EMPLEADO}", "{EMPLEADO}"));
 			//Fin segmento ORC
 			
 			
 			//Segmento OBR
 			
-			hl7.setOBR(hl7.getOBR().replace("{COD_EMPLEADO}", employee.getCode()));
-			hl7.setOBR(hl7.getOBR().replace("{EMPLEADO}", employee.getName() + " " + employee.getSurname()));
+			hl7.setOBR(hl7.getOBR().replace("{COD_EMPLEADO}", "{COD_EMPLEADO}"));
+			hl7.setOBR(hl7.getOBR().replace("{EMPLEADO}", "{EMPLEADO}"));
 			hl7.setOBR(hl7.getOBR().replace("{ID_EXAMEN_SOL}", "74036")); //No estoy seguro si cambia (siempre es examen de sangre)
 			//Fin segmento OBR
 			
@@ -226,8 +233,10 @@ public class XMLProcessor {
 		return object;
 	}
 
+	/*
 	public static void main(String[] args) {
 		new XMLProcessor().XMLToObject(Constans.FILE_PATH);
 	}
+	*/
 
 }

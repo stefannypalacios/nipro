@@ -97,7 +97,7 @@ public class InterfazController extends BaseBean {
 					//mensaje válido
 					response.setMessage("OK");
 					response.setStatus(true);
-					/*
+					
 					String[] hl7 = interfaz.getMessage().split(System.getProperty("line.separator"));
 					String msh = hl7[0];
 					String orc = hl7[3];
@@ -114,8 +114,8 @@ public class InterfazController extends BaseBean {
 					//Envío HL7
 					String messege = new ConnectionAPI().soapMessage("");
 					new ConnectionAPI().soapURLConnection(messege, "");
-					*/
-					String idSolicitud = "XXXX";
+					
+					//String idSolicitud = "XXXX";
 					
 					// Creando archivo
 					Path currentRelativePath = Paths.get("");
