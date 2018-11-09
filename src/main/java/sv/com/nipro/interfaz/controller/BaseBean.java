@@ -78,7 +78,7 @@ public class BaseBean {
 			md.update(msgCompare.getBytes());
 			byte[] digest = md.digest();
 			md5 = new BigInteger(1, digest).toString(16);
-
+			System.out.println(md5);
 			return md5.equals(msgOrig);
 
 		} catch (NoSuchAlgorithmException e) {

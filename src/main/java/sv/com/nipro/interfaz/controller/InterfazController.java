@@ -88,7 +88,7 @@ public class InterfazController extends BaseBean {
 		System.out.println("acceptMessage - RequestBody " + interfaz);
 		
 		Transaction tr = new Transaction();
-		
+		System.out.println(interfaz.getMessage());
 		Response response = new Response();
 		try {
 			if (isTokenActive(interfaz.getToken(), 2)) { // si token es valido, mensaje y md5 mensaje
@@ -98,15 +98,15 @@ public class InterfazController extends BaseBean {
 					response.setMessage("OK");
 					response.setStatus(true);
 					
-					String[] hl7 = interfaz.getMessage().split(System.getProperty("line.separator"));
+					String[] hl7 = interfaz.getMessage().split("\n");
 					String msh = hl7[0];
 					String orc = hl7[3];
 					
 					//datos necesarios
-					String idSolicitud = orc.split("|")[2];
-					String suministranteAll = msh.split("|")[5];
-					String suministrante = suministranteAll.split("^")[1];
-					String idSuministrante = suministranteAll.split("^")[0];
+					String idSolicitud = orc.split("\\|")[2];
+					String suministranteAll = msh.split("\\|")[5];
+					String suministrante = suministranteAll.split("\\^")[1];
+					String idSuministrante = suministranteAll.split("\\^")[0];
 					
 					//Generar HL7
 					String hl7toSend = "";
