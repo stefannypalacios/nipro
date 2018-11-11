@@ -5,6 +5,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "sample")
 public class Sample {
+	private String SEQ;
 	private String DATE;
 	private String RBC;
 	private String RBC_L;
@@ -72,6 +73,15 @@ public class Sample {
 	private String GR;
 	private String GR_L;
 	private String GR_H;
+	
+	public String getSEQ() {
+		return SEQ;
+	}
+	
+	@XmlAttribute(name = "SEQ")
+	public void setSEQ(String sEQ) {
+		SEQ = sEQ;
+	}
 	
 	public String getDATE() {
 		return DATE;

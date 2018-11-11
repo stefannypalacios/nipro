@@ -23,11 +23,15 @@ import sv.com.nipro.interfaz.entities.Employee;
 
 @Component
 public class XMLProcessor {
-	@Autowired
-	private SessionController session;
+	private List<Hl7DTO> lstHl7; 
 	
-	public Samples XMLToObject(String path) {
+	public List<Hl7DTO> processXML(String path, List<Element> lstElements) {
 		Samples object = null;
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat fmtHL7 = new SimpleDateFormat(Constans.FORMAT_DATE_HL7);
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern(Constans.FORMAT_DATE_HL7); 
+		
+		
 		try {
 			File file = new File(path);
 			JAXBContext jaxbContext = JAXBContext.newInstance(Samples.class);
@@ -39,64 +43,59 @@ public class XMLProcessor {
 			
 			// ******************************INICIO**********************************
 			
-			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			SimpleDateFormat fmtHL7 = new SimpleDateFormat(Constans.FORMAT_DATE_HL7);
-			DateTimeFormatter dtf = DateTimeFormatter.ofPattern(Constans.FORMAT_DATE_HL7); 
-			 
-						
-			Hl7DTO hl7 = new Hl7DTO();
-			hl7.setMSH(Constans.MSH);
-			hl7.setORC(Constans.ORC);
-			hl7.setOBR(Constans.OBR);
-			
-			//Segmento MSH
-			
-			//AMBOS CAMPOS ESTÁN PRESENTES EN LA SOLICITUD
-			hl7.setMSH(hl7.getMSH().replace("{SUMINISTRANTE_ID}", "{SUMINISTRANTE_ID}"));
-			hl7.setMSH(hl7.getMSH().replace("{SUMINISTRANTE}", "{SUMINISTRANTE}"));			
-			
-			
-			//Fin segmento MSH
-			
-			
-			//Segmento ORC		
-			
-			//Da la impresión de que solicitan cambios en un resultado ¿?
-			hl7.setORC(hl7.getORC().replace("{COD_CTLR}", "NW")); //NW = nuevo, XO = Cambio
-			hl7.setORC(hl7.getORC().replace("{ID_SOLICITUD}", "{ID_SOLICITUD}")); //Aún no se de donde sacarlo
-			
-			LocalDateTime now = LocalDateTime.now(); 
-			hl7.setORC(hl7.getORC().replace("{FECHA_ENVIO}", dtf.format(now)));
-			
-			hl7.setORC(hl7.getORC().replace("{COD_EMPLEADO}", "{COD_EMPLEADO}"));
-			hl7.setORC(hl7.getORC().replace("{EMPLEADO}", "{EMPLEADO}"));
-			//Fin segmento ORC
-			
-			
-			//Segmento OBR
-			
-			hl7.setOBR(hl7.getOBR().replace("{COD_EMPLEADO}", "{COD_EMPLEADO}"));
-			hl7.setOBR(hl7.getOBR().replace("{EMPLEADO}", "{EMPLEADO}"));
-			hl7.setOBR(hl7.getOBR().replace("{ID_EXAMEN_SOL}", "74036")); //No estoy seguro si cambia (siempre es examen de sangre)
-			//Fin segmento OBR
-			
-			
-			
-			//Llenar lista con todos los elementos
-			List<Element> lstEl = new ArrayList<Element>();
-			String OBX;
-			
-			OBX = Constans.OBX_1;
-			//TODO: ID del resultado cualitativo SEPS ??
-			OBX = OBX.replace("{ID_RESULTADO}", "1");
-			OBX = OBX.replace("{RESULTADO}", "Normal");
-			
-			System.out.println(OBX);		
-			
-			hl7.getOBXLlst().add(OBX);
-			
 			for (Sample s : object.getSample()) {
 				boolean add = true;
+				
+				//----		
+				Hl7DTO hl7 = new Hl7DTO();
+				hl7.setResultId(s.getSEQ());
+				hl7.setMSH(Constans.MSH);
+				hl7.setORC(Constans.ORC);
+				hl7.setOBR(Constans.OBR);
+				
+				//Segmento MSH
+				
+				//AMBOS CAMPOS ESTÁN PRESENTES EN LA SOLICITUD
+				hl7.setMSH(hl7.getMSH().replace("{SUMINISTRANTE_ID}", "{SUMINISTRANTE_ID}"));
+				hl7.setMSH(hl7.getMSH().replace("{SUMINISTRANTE}", "{SUMINISTRANTE}"));			
+				
+				
+				//Fin segmento MSH
+				
+				
+				//Segmento ORC		
+				
+				//Da la impresión de que solicitan cambios en un resultado ¿?
+				hl7.setORC(hl7.getORC().replace("{COD_CTLR}", "NW")); //NW = nuevo, XO = Cambio
+				hl7.setORC(hl7.getORC().replace("{ID_SOLICITUD}", "{ID_SOLICITUD}")); //Aún no se de donde sacarlo
+				
+				LocalDateTime now = LocalDateTime.now(); 
+				hl7.setORC(hl7.getORC().replace("{FECHA_ENVIO}", dtf.format(now)));
+				
+				hl7.setORC(hl7.getORC().replace("{COD_EMPLEADO}", "{COD_EMPLEADO}"));
+				hl7.setORC(hl7.getORC().replace("{EMPLEADO}", "{EMPLEADO}"));
+				//Fin segmento ORC
+				
+				
+				//Segmento OBR
+				
+				hl7.setOBR(hl7.getOBR().replace("{COD_EMPLEADO}", "{COD_EMPLEADO}"));
+				hl7.setOBR(hl7.getOBR().replace("{EMPLEADO}", "{EMPLEADO}"));
+				hl7.setOBR(hl7.getOBR().replace("{ID_EXAMEN_SOL}", "74036")); //No estoy seguro si cambia (siempre es examen de sangre)
+				//Fin segmento OBR
+				
+				
+				String OBX;
+				
+				OBX = Constans.OBX_1;
+				//TODO: ID del resultado cualitativo SEPS ??
+				OBX = OBX.replace("{ID_RESULTADO}", "1");
+				OBX = OBX.replace("{RESULTADO}", "Normal");
+				
+				hl7.getOBXLlst().add(OBX);
+				
+				//-----				
+				
 				OBX = Constans.OBX;
 				int i = 2;
 				if (s.getDATE() != null) {
@@ -110,7 +109,7 @@ public class XMLProcessor {
 				hl7.setOBR(hl7.getOBR().replace("{FECHA_GENERADO}", fmtHL7.format(date))); //Sección OBR
 				
 				
-				for (Element element : lstEl) {
+				for (Element element : lstElements) {
 					add = true;
 					
 					OBX = OBX.replace("{AUTOINCREMENTO}", i + "");
@@ -221,17 +220,17 @@ public class XMLProcessor {
 				if (add) {
 					hl7.getOBXLlst().add(OBX);
 				}
-			}
+				
+				lstHl7.add(hl7);
+			}		
 			
 			// ******************************FIN**********************************
-			
-			System.out.println(hl7.getHL7());
-			
+						
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return object;
-	}
+		return lstHl7;
+	}	
 
 	/*
 	public static void main(String[] args) {

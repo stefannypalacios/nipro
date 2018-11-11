@@ -104,9 +104,9 @@ public class InterfazController extends BaseBean {
 					
 					//datos necesarios
 					String idSolicitud = orc.split("\\|")[2];
-					String suministranteAll = msh.split("\\|")[5];
-					String suministrante = suministranteAll.split("\\^")[1];
-					String idSuministrante = suministranteAll.split("\\^")[0];
+					//String suministranteAll = msh.split("\\|")[5];
+					//String suministrante = suministranteAll.split("\\^")[1];
+					//String idSuministrante = suministranteAll.split("\\^")[0];
 					
 					//Generar HL7
 					String hl7toSend = "";

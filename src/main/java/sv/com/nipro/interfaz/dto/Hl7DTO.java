@@ -5,6 +5,7 @@ import java.util.List;
 
 public class Hl7DTO {
 	
+	private String resultId;
 	private String MSH;
 	private String ORC;
 	private String OBR;
@@ -38,6 +39,15 @@ public class Hl7DTO {
 	public void setOBXLlst(List<String> oBXLlst) {
 		OBXLlst = oBXLlst;
 	}
+	
+	public String getResultId() {
+		return resultId;
+	}
+	
+	public void setResultId(String resultId) {
+		this.resultId = resultId;
+	}
+	
 	public String getHL7(){
 		String HL7 = "";
 		
