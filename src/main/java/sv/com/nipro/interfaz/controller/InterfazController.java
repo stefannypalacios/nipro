@@ -55,12 +55,13 @@ public class InterfazController extends BaseBean {
 		System.out.println("checkin - RequestBody " + interfaz);
 		
 		Token tk = new Token();
+		Transaction tr = new Transaction();
 		
 		ResponseCheckin response = new ResponseCheckin();
 		try {
 			User user = getUser(interfaz.getAppUser(), PasswordUtils.generateSecurePassword(interfaz.getPassword(), Constans.PDW_SALT));
 			if (user != null && user.getUserid() != null && user.getUserid() != 0) {
-				response.setMessage("");
+				response.setMessage(" ");
 				response.setStatus(true);
 				response.setToken(TokenGenerator.generateToken(interfaz.getAppUser()));
 				
@@ -76,6 +77,13 @@ public class InterfazController extends BaseBean {
 				response.setStatus(false);
 				response.setToken(null);
 			}
+			
+			tr.setMethod("checkin");
+			tr.setType("INPUT");
+			tr.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+			tr.setMessage(response.getMessage());
+			trRepository.save(tr);
+			
 		} catch (Exception ex) {
 			Logger.getLogger(InterfazController.class.getName()).log(Level.SEVERE, null, ex);
 		}
@@ -174,6 +182,7 @@ public class InterfazController extends BaseBean {
 	@RequestMapping(value = "/checkout", method = RequestMethod.POST)
 	public ResponseEntity checkout(@RequestBody RequestCheckout interfaz) {
 		System.out.println("checkout - RequestBody " + interfaz);
+		Transaction tr = new Transaction();
 
 		Response response = new Response();
 		try {
@@ -184,6 +193,14 @@ public class InterfazController extends BaseBean {
 				response.setMessage("Authentication Failed");
 				response.setStatus(false);
 			}
+			
+			tr.setMethod("checkout");
+			tr.setType("INPUT");
+			tr.setTokenid(tokenRepository.findByToken(interfaz.getToken()));
+			tr.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+			tr.setMessage(response.getMessage());
+			trRepository.save(tr);
+			
 		} catch (Exception ex) {
 			Logger.getLogger(InterfazController.class.getName()).log(Level.SEVERE, null, ex);
 		}

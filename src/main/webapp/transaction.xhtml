@@ -33,10 +33,10 @@
 									listener="#{transactionController.fillTransactionLst}"
 									update="table" />
 								<f:selectItem itemLabel="-- Seleccione --" itemValue="" />
-								<f:selectItem itemLabel="Checkout" itemValue="Checkout" />
-								<f:selectItem itemLabel="Checkin" itemValue="Checkin" />
+								<f:selectItem itemLabel="Checkout" itemValue="checkout" />
+								<f:selectItem itemLabel="Checkin" itemValue="checkin" />
 								<f:selectItem itemLabel="AcceptMessage"
-									itemValue="AcceptMessage" />
+									itemValue="acceptMessage" />
 							</p:selectOneMenu>
 						</div>
 					</div>
@@ -67,13 +67,15 @@
 					<p:column>
 						<f:facet name="header">Fecha</f:facet>
 						<h:outputText value="#{obj.createdAt}">
-							<f:convertDateTime pattern="dd/MM/yyyy" />
+							<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
 						</h:outputText>
 					</p:column>
+					<!--  
 					<p:column>
 						<f:facet name="header">Acciones</f:facet>
 						<p:commandButton value="Detalle" type="button" onclick="#{transactionController.prueba(obj)}" />
 					</p:column>
+					-->
 				</p:dataTable>
 			</p:panel>
 		</h:form>
