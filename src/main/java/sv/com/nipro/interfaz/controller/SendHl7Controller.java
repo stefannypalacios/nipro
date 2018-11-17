@@ -66,23 +66,26 @@ public class SendHl7Controller extends BaseBean implements Serializable {
 		if (lstHl7Dto != null) {
 			for (Hl7DTO dto : lstHl7Dto) {
 				try {
-					Archivehl7 archive = new Archivehl7();
-					archive.setResultid(dto.getResultId());
-					archive.setName("result_" + dto.getResultId() + ".txt");
-					archive.setStatus("PENDING");
-					archive.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-
-					archiveHl7Rpst.save(archive);
-
-					// Creating archive
-					Path currentRelativePath = Paths.get("");
-					File fileHl7 = new File(currentRelativePath.toAbsolutePath().toString() + archive.getName());
 					
-					BufferedWriter bw;
-					
-					bw = new BufferedWriter(new FileWriter(fileHl7));
-					bw.write(dto.getHL7());
-					bw.close();
+					if (!validateArchive(dto.getResultId())) {
+						Archivehl7 archive = new Archivehl7();
+						archive.setResultid(dto.getResultId());
+						archive.setName("result_" + dto.getResultId() + ".txt");
+						archive.setStatus("PENDING");
+						archive.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+
+						archiveHl7Rpst.save(archive);
+
+						// Creating archive
+						Path currentRelativePath = Paths.get("");
+						File fileHl7 = new File(currentRelativePath.toAbsolutePath().toString() + archive.getName());
+						
+						BufferedWriter bw;
+						
+						bw = new BufferedWriter(new FileWriter(fileHl7));
+						bw.write(dto.getHL7());
+						bw.close();
+					}				
 					
 				} catch (Exception e) {
 					logger.error(e, e);
@@ -91,6 +94,16 @@ public class SendHl7Controller extends BaseBean implements Serializable {
 
 		}
 
+	}
+	
+	
+	public Boolean validateArchive(String resultId) {
+
+		Archivehl7 archivehl7 = archiveHl7Rpst.findByResultid(resultId);
+		if (archivehl7 != null && archivehl7.getArchivehl7id() != null) {
+			return true;
+		}
+		return false;
 	}
 
 }
