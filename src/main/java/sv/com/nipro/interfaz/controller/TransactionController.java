@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
+import sv.com.nipro.interfaz.entities.Archive;
 import sv.com.nipro.interfaz.entities.Transaction;
+import sv.com.nipro.interfaz.repository.ArchiveRepository;
 import sv.com.nipro.interfaz.repository.TransactionRepository;
 
 
@@ -24,17 +26,30 @@ public class TransactionController extends BaseBean implements Serializable{
 	
 	@Autowired
 	private TransactionRepository transactionRpty;
+	@Autowired
+	private ArchiveRepository archiveRpty;
+	@Autowired
+	private SessionController session;
 	
 	private List<Transaction> lstTransaction;
+	private List<Archive> lstArchives;
 	private Transaction selectedTransaction;
 	private String type = "";
 	private String method = "";
 	
 	@PostConstruct
 	public void init() {
-		logger.info("******************init*********************");
+		logger.info("******************TransactionController init*********************");
 		fillTransactionLst();
+		fillArchives();
 		//lstTransaction.get(0).getArchiveList();
+		System.out.println("**TEST***");
+		if (session != null && session.getUserInSession() != null) {
+			logger.info("***********FUNCIONA**********");
+			logger.info(session.getUserInSession().toString());
+		}else if (session == null) {
+			logger.info("*****Session null*****");
+		}
 	}
 
 	public void fillTransactionLst() {
@@ -64,12 +79,28 @@ public class TransactionController extends BaseBean implements Serializable{
 		
 	}
 	
+	public void fillArchives() {
+		lstArchives = archiveRpty.findByStatus("PENDING");
+	}
+	
 	public void prueba(Transaction tr){
 		logger.info("***********prueba***********");
 		if (tr != null){
 			logger.info(tr.toString());
 		}
 		logger.info("**********************");
+	}
+	
+	public void sendSolicitude(Archive arc) {
+		logger.info(arc.toString());
+	}
+	
+	public List<Archive> getLstArchives() {
+		return lstArchives;
+	}
+	
+	public void setLstArchives(List<Archive> lstArchives) {
+		this.lstArchives = lstArchives;
 	}
 	
 	public List<Transaction> getLstTransaction() {

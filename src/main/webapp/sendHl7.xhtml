@@ -1,0 +1,39 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:panel header="Solicitudes">
+		<h:form id="frmS">
+			<p:dataTable id="tblSolicitud" var="obj" rows="10" paginator="true"
+				paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				rowsPerPageTemplate="10,20,30"
+				value="#{transactionController.lstArchives}">
+				
+				<p:column>
+					<f:facet name="header">Id Solicitud</f:facet>
+					<h:outputText value="#{obj.solicitudid}" />
+				</p:column>
+				<p:column>
+					<f:facet name="header">Paciente</f:facet>
+					<h:outputText value="#{obj.patientName}" />
+				</p:column>
+				<p:column>
+					<f:facet name="header">Fecha</f:facet>
+					<h:outputText value="#{obj.createdAt}" />
+				</p:column>
+				<p:column style="width: 10%; text-align: center;">
+					<f:facet name="header">Enviar</f:facet>
+					<p:commandButton icon="ui-icon-extlink"
+	                        title="Enviar"
+	                        actionListener="#{transactionController.sendSolicitude(obj)}"
+	                        ajax="false" />
+				</p:column>				
+			
+			</p:dataTable>
+		</h:form>
+
+	</p:panel>
+
+</ui:composition>

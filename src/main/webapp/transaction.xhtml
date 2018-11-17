@@ -8,7 +8,13 @@
 	xmlns:p="http://primefaces.org/ui">
 <ui:composition template="layout.xhtml">
 	<ui:define name="content">
-		<h:form id="form">
+		<p:tabView>
+			<p:tab title="Envío de resultados">
+				<ui:include src="sendHl7.xhtml" />
+			</p:tab>
+			<p:tab title="Transacciones">
+			
+				<h:form id="form">
 			<div class="ui-g">
 				<p:fieldset legend="Filtros"
 					style="margin-bottom:20px; width: 100%;">
@@ -45,7 +51,10 @@
 			</div>
 
 			<p:panel header="Transacciones">
-				<p:dataTable id="table" var="obj"
+				<p:dataTable id="table" var="obj" rows="10"
+					paginator="true"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,20,30"
 					value="#{transactionController.lstTransaction}">
 					<p:column>
 						<f:facet name="header">Usuario</f:facet>
@@ -79,21 +88,10 @@
 				</p:dataTable>
 			</p:panel>
 		</h:form>
-		
-		<p:dialog header="Detalle de la transacción" widgetVar="dlg2" modal="true" resizable="false">
-		    <h:form id="frmModal">
-		    	<div class="iu-g">
-		    		<div class="ui-g-12 ui-md-6 ui-lg-6">
-		    		
-		    		</div>
-		    		<div class="ui-g-12 ui-md-6 ui-lg-6"></div>
-		    		<div class="ui-g-12 ui-md-6 ui-lg-6"></div>
-		    		<div class="ui-g-12 ui-md-6 ui-lg-6"></div>
-		    		<div class="ui-g-12 ui-md-6 ui-lg-6"></div>
-		    	</div>
-		    </h:form>
-		</p:dialog>
-		
+			
+			</p:tab>			
+		</p:tabView>
+	
 	</ui:define>
 </ui:composition>
 </html>
