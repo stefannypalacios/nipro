@@ -1,5 +1,7 @@
 package sv.com.nipro.interfaz.dto;
 
+import sv.com.nipro.interfaz.utils.Constans;
+
 public class RequestCheckin {
 
 	private String appUser;
@@ -10,7 +12,7 @@ public class RequestCheckin {
 	}
 
 	public void setAppUser(String appUser) {
-		this.appUser = appUser;
+		this.appUser = Constans.ucFirst(appUser);
 	}
 
 	public String getPassword() {
@@ -18,7 +20,7 @@ public class RequestCheckin {
 	}
 
 	public void setPassword(String password) {
-		this.password = password;
+		this.password = Constans.ucFirst(password);
 	}
 
 	@Override
