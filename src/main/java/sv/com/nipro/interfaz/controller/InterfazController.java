@@ -27,18 +27,13 @@ import org.xml.sax.SAXException;
 
 import com.google.gson.Gson;
 
-import sv.com.nipro.interfaz.entities.Archive;
 import sv.com.nipro.interfaz.dto.RequestAcceptMessage;
 import sv.com.nipro.interfaz.dto.RequestCheckin;
-import sv.com.nipro.interfaz.dto.RequestCheckinSend;
 import sv.com.nipro.interfaz.dto.RequestCheckinWS;
 import sv.com.nipro.interfaz.dto.RequestCheckout;
-import sv.com.nipro.interfaz.dto.RequestSend;
 import sv.com.nipro.interfaz.dto.Response;
-import sv.com.nipro.interfaz.dto.ResponseAcceptMessageSend;
 import sv.com.nipro.interfaz.dto.ResponseCheckin;
-import sv.com.nipro.interfaz.dto.ResponseCheckinSend;
-import sv.com.nipro.interfaz.dto.ResponseCheckoutSend;
+import sv.com.nipro.interfaz.entities.Archive;
 import sv.com.nipro.interfaz.entities.Token;
 import sv.com.nipro.interfaz.entities.Transaction;
 import sv.com.nipro.interfaz.entities.User;
@@ -227,42 +222,57 @@ public class InterfazController extends BaseBean {
 		return new ResponseEntity(response, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/checkin_send", method = RequestMethod.POST)
-	public ResponseEntity checkinSend(@RequestBody RequestCheckinSend interfaz) {
-		System.out.println("checkinSend - RequestBody " + interfaz);
-
-		Token tk = new Token();
-		Transaction tr = new Transaction();
-
-		
-		ResponseCheckinSend response = new ResponseCheckinSend();
-		try {
-
-			if (interfaz.getStatus()) {
-				response.setAppUser("");
-				response.setPassword("");
-			} else {
-				return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
-			}
-
-		} catch (Exception ex) {
-			Logger.getLogger(InterfazController.class.getName()).log(Level.SEVERE, null, ex);
-		}
-		System.out.println("checkin().response " + response);
-		return new ResponseEntity(response, HttpStatus.OK);
-	}
-	
-	
-	
-	public void connection(){
+	public void checkinWS(){
 		try {
 			RequestCheckinWS checkin = new RequestCheckinWS();
+			ConnectionAPI api = new ConnectionAPI();
 			Gson gson = new Gson();
 			checkin.setUser("eautomatizadohematologia");
-			checkin.setPassword("34ut0m4t1z4d0");		
+			checkin.setPassword("34ut0m4t1z4d0");
+			String msg = api.soapMessageCheckin(gson.toJson(checkin));
+
+			String resp = new ConnectionAPI().soapURLConnection(msg, Constans.NAME_SERVICE_CHECKIN);
+			System.out.println("checkinWS: "+resp);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (SAXException e) {
+			e.printStackTrace();
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void acceptMessageWS(){
+		try {
+			RequestCheckinWS checkin = new RequestCheckinWS();
+			ConnectionAPI api = new ConnectionAPI();
+			Gson gson = new Gson();
+			checkin.setUser("eautomatizadohematologia");
+			checkin.setPassword("34ut0m4t1z4d0");
+			String msg = api.soapMessageCheckin(gson.toJson(checkin));
 						
-			String resp = new ConnectionAPI().soapURLConnection(gson.toJson(checkin), Constans.NAME_SERVICE_CHECKIN);
-			System.out.println("hhhhhhhhhhhhhhh: "+resp);
+			String resp = api.soapURLConnection(msg, Constans.NAME_SERVICE_ACCEPTMESSAGE);
+			System.out.println("acceptMessageWS: "+resp);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (SAXException e) {
+			e.printStackTrace();
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void checkoutWS(){
+		try {
+			RequestCheckinWS checkin = new RequestCheckinWS();
+			ConnectionAPI api = new ConnectionAPI();
+			Gson gson = new Gson();
+			checkin.setUser("eautomatizadohematologia");
+			checkin.setPassword("34ut0m4t1z4d0");
+			String msg = api.soapMessageCheckin(gson.toJson(checkin));
+												
+			String resp = new ConnectionAPI().soapURLConnection(msg, Constans.NAME_SERVICE_CHECKOUT);
+			System.out.println("checkoutWS: "+resp);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (SAXException e) {
@@ -273,51 +283,9 @@ public class InterfazController extends BaseBean {
 	}
 
 	public static void main(String[] args) {
-		new InterfazController().connection();
-	}
+		new InterfazController().checkinWS();
+	}	
 	
-	@RequestMapping(value = "/acceptMessage_send", method = RequestMethod.POST)
-	public ResponseEntity acceptMessageSend(@RequestBody RequestSend interfaz) {
-		System.out.println("acceptMessage - RequestBody " + interfaz);
-
-		Transaction tr = new Transaction();
-		System.out.println(interfaz.getMessage());
-		ResponseAcceptMessageSend response = new ResponseAcceptMessageSend();
-		try {
-			
-			if (interfaz.getStatus()) {
-				response.setChecksum("");
-				response.setMessage("");
-				response.setToken("");
-			} else {
-				return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
-			}
-
-		} catch (Exception ex) {
-			Logger.getLogger(InterfazController.class.getName()).log(Level.SEVERE, null, ex);
-		}
-		System.out.println("checkin().response " + response);
-		return new ResponseEntity(response, HttpStatus.OK);
-	}
-
-	@RequestMapping(value = "/checkout_send", method = RequestMethod.POST)
-	public ResponseEntity checkoutSend(@RequestBody RequestSend interfaz) {
-		System.out.println("checkout - RequestBody " + interfaz);
-		Transaction tr = new Transaction();
-
-		ResponseCheckoutSend response = new ResponseCheckoutSend();
-		try {
-			if (interfaz.getStatus()) {
-				response.setToken("");
-			} else {
-				return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
-			}
-		} catch (Exception ex) {
-			Logger.getLogger(InterfazController.class.getName()).log(Level.SEVERE, null, ex);
-		}
-		System.out.println("checkin().response " + response);
-		return new ResponseEntity(response, HttpStatus.OK);
-	}
 	
 	@GetMapping("/user")
 	public List<User> user() {
