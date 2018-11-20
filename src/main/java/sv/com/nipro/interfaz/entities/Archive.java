@@ -35,7 +35,7 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Archive.findByType", query = "SELECT a FROM Archive a WHERE a.type = :type"),
     @NamedQuery(name = "Archive.findByName", query = "SELECT a FROM Archive a WHERE a.name = :name"),
     @NamedQuery(name = "Archive.findByCreatedAt", query = "SELECT a FROM Archive a WHERE a.createdAt = :createdAt"),
-    @NamedQuery(name = "Archive.findByStatus", query = "SELECT a FROM Archive a WHERE a.status = :status"),})
+    @NamedQuery(name = "Archive.findByStatus", query = "SELECT a FROM Archive a WHERE a.status = :status")})
 public class Archive implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -61,7 +61,9 @@ public class Archive implements Serializable {
     private Date createdAt;
     @Column(name="patient_name")
 	private String patientName;
+    @Column(name="status")
 	private String status;
+    @Column(name="solicitudid")
 	private String solicitudid;
     @JoinColumn(name = "transactionid", referencedColumnName = "transactionid")
     @ManyToOne(optional = false)

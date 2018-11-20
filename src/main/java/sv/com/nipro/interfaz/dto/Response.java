@@ -5,34 +5,38 @@
  */
 package sv.com.nipro.interfaz.dto;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
+
 /**
  *
  * @author karina.palacios
  */
 public class Response {
 
-	private Boolean status;
-	private String message;
+	private Boolean estado;
+	private String mensaje;
 
-	public Boolean getStatus() {
-		return status;
+	public Boolean getEstado() {
+		return estado;
 	}
 
-	public void setStatus(Boolean status) {
-		this.status = status;
+	@JsonSetter("Estado")
+	public void setEstado(Boolean estado) {
+		this.estado = estado;
 	}
 
-	public String getMessage() {
-		return message;
+	public String getMensaje() {
+		return mensaje;
 	}
 
-	public void setMessage(String message) {
-		this.message = message;
+	@JsonSetter("Mensaje")
+	public void setMensaje(String mensaje) {
+		this.mensaje = mensaje;
 	}
 
 	@Override
 	public String toString() {
-		return "Response [status=" + status + ", message=" + message + "]";
+		return "Response [estado=" + estado + ", mensaje=" + mensaje + "]";
 	}
 
 }

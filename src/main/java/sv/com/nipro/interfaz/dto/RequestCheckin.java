@@ -1,31 +1,33 @@
 package sv.com.nipro.interfaz.dto;
 
-import sv.com.nipro.interfaz.utils.Constans;
+import com.fasterxml.jackson.annotation.JsonSetter;
 
 public class RequestCheckin {
 
-	private String appUser;
-	private String password;
+	private String AppUser;
+	private String Password;
 
 	public String getAppUser() {
-		return appUser;
+		return AppUser;
 	}
 
+	@JsonSetter("AppUser")
 	public void setAppUser(String appUser) {
-		this.appUser = Constans.ucFirst(appUser);
+		AppUser = appUser;
 	}
 
 	public String getPassword() {
-		return password;
+		return Password;
 	}
 
+	@JsonSetter("Password")
 	public void setPassword(String password) {
-		this.password = Constans.ucFirst(password);
+		Password = password;
 	}
 
 	@Override
 	public String toString() {
-		return "RequestCheckin [appUser=" + appUser + ", password=" + password + "]";
+		return "RequestCheckin [AppUser=" + AppUser + ", Password=" + Password + "]";
 	}
 
 }

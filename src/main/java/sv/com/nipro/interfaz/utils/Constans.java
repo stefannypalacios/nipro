@@ -27,9 +27,17 @@ public class Constans {
 	/**
 	 * TODO:: Se deben de moficar
 	 */
-	public static final String URL_WS = "";
+	public static final String URL_WS = "http://siaps.localhost/app_dev.php/api/";
+	public static final String NAME_SERVICE_CHECKIN = "checkin";
+	public static final String NAME_SERVICE_ACCEPTMESSAGE = "acceptMessage";
+	public static final String NAME_SERVICE_CHECKOUT = "checkout";
 	public static final String FILE_PATH = "C:\\Users\\osegueda\\Documents\\nipro-docs\\BouleDataInterface\\BM800_Data\\BM-105247_2018-10-22.xml";
 
+	public String mensajeReqCheckin(String user, String pass){
+		String mensaje = "";
+		
+		return mensaje;
+	}
 	public static String ucFirst(String str) {
 		if (str == null || str.isEmpty()) {
 			return str;

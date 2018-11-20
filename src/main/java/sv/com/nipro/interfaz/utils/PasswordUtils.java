@@ -57,4 +57,8 @@ public class PasswordUtils {
 
 		return returnValue;
 	}
+	
+	public static void main(String[] args) {
+		 System.out.println(PasswordUtils.generateSecurePassword("123", Constans.PDW_SALT));
+	}
 }

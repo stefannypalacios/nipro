@@ -5,43 +5,48 @@
  */
 package sv.com.nipro.interfaz.dto;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
+
 /**
  *
  * @author karina.palacios
  */
 public class ResponseCheckin {
 
-	private Boolean status;
-	private String message;
+	private Boolean estado;
+	private String mensaje;
 	private String token;
 
-	public Boolean getStatus() {
-		return status;
+	public Boolean getEstado() {
+		return estado;
 	}
 
-	public void setStatus(Boolean status) {
-		this.status = status;
+	@JsonSetter("Estado")
+	public void setEstado(Boolean estado) {
+		this.estado = estado;
 	}
 
-	public String getMessage() {
-		return message;
+	public String getMensaje() {
+		return mensaje;
 	}
 
-	public void setMessage(String message) {
-		this.message = message;
+	@JsonSetter("Mensaje")
+	public void setMensaje(String mensaje) {
+		this.mensaje = mensaje;
 	}
 
 	public String getToken() {
 		return token;
 	}
 
+	@JsonSetter("Token")
 	public void setToken(String token) {
 		this.token = token;
 	}
 
 	@Override
 	public String toString() {
-		return "Response [status=" + status + ", message=" + message + ", token=" + token + "]";
+		return "Response [Estado=" + estado + ", Mensaje=" + mensaje + ", Token=" + token + "]";
 	}
 
 }

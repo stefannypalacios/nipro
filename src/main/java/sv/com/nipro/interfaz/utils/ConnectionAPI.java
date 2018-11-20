@@ -39,9 +39,11 @@ public class ConnectionAPI {
         if (Constans.URL_WS != null && !"".equals(Constans.URL_WS)) {
             java.net.URL url = new java.net.URL(Constans.URL_WS);
             java.net.URLConnection conn = url.openConnection();
+            
+            System.out.println("conn... "+conn.getContent());
 
             // Set the necessary header fields
-            conn.setRequestProperty("SOAPAction", Constans.URL_WS.concat("#").concat(wsReq));
+            conn.setRequestProperty("SOAPAction", Constans.URL_WS.concat("/").concat(wsReq));
             conn.setDoOutput(true);
 
             // Send the request
@@ -73,11 +75,42 @@ public class ConnectionAPI {
         return resp;
     }
     
-    public String soapMessage(String msg) {
+    public String soapMessageCheckin(String msg) {
         String message
                 = "<soapenv:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tran=\"https://qaconectividad.credix.com/webservices/ws/transactions\">  "
                 + "<soapenv:Header/>   "
                 + "<soapenv:Body>      "
+	                + "<urn:checkin>      "
+	                	+ " <json_array>"+ msg +"</json_array>"
+	                + "</urn:checkin>     "
+                + "</soapenv:Body>"
+                + "</soapenv:Envelope>";
+
+        return message;
+    }
+    
+    public String soapMessageAcceptMessage(String msg) {
+        String message
+                = "<soapenv:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tran=\"https://qaconectividad.credix.com/webservices/ws/transactions\">  "
+                + "<soapenv:Header/>   "
+                + "<soapenv:Body>      "
+	                + "<urn:acceptMessage>      "
+	                	+ " <json_array>"+ msg +"</json_array>"
+	                + "</urn:acceptMessage>     "
+                + "</soapenv:Body>"
+                + "</soapenv:Envelope>";
+
+        return message;
+    }
+    
+    public String soapMessageCheckout(String msg) {
+        String message
+                = "<soapenv:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tran=\"https://qaconectividad.credix.com/webservices/ws/transactions\">  "
+                + "<soapenv:Header/>   "
+                + "<soapenv:Body>      "
+	                + "<urn:checkout>      "
+	                	+ " <json_array>"+ msg +"</json_array>"
+	                + "</urn:checkout>     "
                 + "</soapenv:Body>"
                 + "</soapenv:Envelope>";
 

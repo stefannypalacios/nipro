@@ -3,6 +3,7 @@ package sv.com.nipro.interfaz.controller;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
@@ -10,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,11 +23,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.xml.sax.SAXException;
+
+import com.google.gson.Gson;
 
 import sv.com.nipro.interfaz.entities.Archive;
 import sv.com.nipro.interfaz.dto.RequestAcceptMessage;
 import sv.com.nipro.interfaz.dto.RequestCheckin;
 import sv.com.nipro.interfaz.dto.RequestCheckinSend;
+import sv.com.nipro.interfaz.dto.RequestCheckinWS;
 import sv.com.nipro.interfaz.dto.RequestCheckout;
 import sv.com.nipro.interfaz.dto.RequestSend;
 import sv.com.nipro.interfaz.dto.Response;
@@ -66,8 +73,8 @@ public class InterfazController extends BaseBean {
 			User user = getUser(interfaz.getAppUser(),
 					PasswordUtils.generateSecurePassword(interfaz.getPassword(), Constans.PDW_SALT));
 			if (user != null && user.getUserid() != null && user.getUserid() != 0) {
-				response.setMessage(" ");
-				response.setStatus(true);
+				response.setMensaje(" ");
+				response.setEstado(true);
 				response.setToken(TokenGenerator.generateToken(interfaz.getAppUser()));
 
 				tk.setUserid(user);
@@ -78,15 +85,15 @@ public class InterfazController extends BaseBean {
 
 				tokenRepository.save(tk);
 			} else {
-				response.setMessage("Credenciales no validas");
-				response.setStatus(false);
+				response.setMensaje("Credenciales no validas");
+				response.setEstado(false);
 				response.setToken(null);
 			}
 
 			tr.setMethod("checkin");
 			tr.setType("INPUT");
 			tr.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-			tr.setMessage(response.getMessage());
+			tr.setMessage(response.getMensaje());
 			trRepository.save(tr);
 
 		} catch (Exception ex) {
@@ -101,24 +108,30 @@ public class InterfazController extends BaseBean {
 		System.out.println("acceptMessage - RequestBody " + interfaz);
 
 		Transaction tr = new Transaction();
-		System.out.println(interfaz.getMessage());
 		Response response = new Response();
 		try {
 			if (isTokenActive(interfaz.getToken(), 2)) { // si token es valido,
 															// mensaje y md5
 															// mensaje
 
-				if (matchingMessage(interfaz.getChecksum(), interfaz.getMessage())) {
+				if (matchingMessage(interfaz.getChecksum(), interfaz.getMensaje())) {
 					// mensaje válido
-					response.setMessage("OK");
-					response.setStatus(true);
+					response.setMensaje("OK");
+					response.setEstado(true);
 
-					String[] hl7 = interfaz.getMessage().split("\n");
+					String[] hl7 = interfaz.getMensaje().split("_z");
+					
+					for (String string : hl7) {
+						System.out.println("****************************");
+						System.out.println(string);
+					}
+					
 					String msh = hl7[0];
 					String orc = hl7[3];
 
 					// datos necesarios
 					String idSolicitud = orc.split("\\|")[2];
+					String nameAll = orc.split("\\|")[12];
 					// String suministranteAll = msh.split("\\|")[5];
 					// String suministrante = suministranteAll.split("\\^")[1];
 					// String idSuministrante =
@@ -128,8 +141,6 @@ public class InterfazController extends BaseBean {
 					String hl7toSend = "";
 
 					// Envío HL7
-					String messege = new ConnectionAPI().soapMessage("");
-					new ConnectionAPI().soapURLConnection(messege, "");
 
 					// String idSolicitud = "XXXX";
 
@@ -142,14 +153,14 @@ public class InterfazController extends BaseBean {
 					BufferedWriter bw;
 					// if (!fileHl7.exists()) {
 					bw = new BufferedWriter(new FileWriter(fileHl7));
-					bw.write(interfaz.getMessage());
+					bw.write(interfaz.getMensaje());
 					bw.close();
 
 					Archive a = new Archive();
 					a.setType("SOLICITUD");
 					a.setCreatedAt(new Timestamp(System.currentTimeMillis()));
 					a.setName(fileHl7.getName());
-					a.setPatientName("nombre");
+					a.setPatientName(nameAll.split("\\^")[2] + " " + nameAll.split("\\^")[1]);
 					a.setStatus("PENDING");
 					a.setTransactionid(tr);
 					a.setSolicitudid(idSolicitud);
@@ -162,22 +173,22 @@ public class InterfazController extends BaseBean {
 
 				} else {
 					// cadena no válida
-					response.setMessage("Cadena no válida"); // concatenar
+					response.setMensaje("Cadena no válida"); // concatenar
 																// cadena
-					response.setStatus(false);
+					response.setEstado(false);
 				}
 
 			} else {
 				// Token no válido
-				response.setMessage("Permiso denegado");
-				response.setStatus(false);
+				response.setMensaje("Permiso denegado");
+				response.setEstado(false);
 			}
 
 			tr.setMethod("acceptMessage");
 			tr.setType("INPUT");
 			tr.setTokenid(tokenRepository.findByToken(interfaz.getToken()));
 			tr.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-			tr.setMessage(response.getMessage());
+			tr.setMessage(response.getMensaje());
 			trRepository.save(tr);
 
 		} catch (Exception ex) {
@@ -195,18 +206,18 @@ public class InterfazController extends BaseBean {
 		Response response = new Response();
 		try {
 			if (inactiveToken(interfaz.getToken())) { // si token es valido
-				response.setMessage("Sesión de usuario finalizada con exito.");
-				response.setStatus(true);
+				response.setMensaje("Sesión de usuario finalizada con exito.");
+				response.setEstado(true);
 			} else {
-				response.setMessage("Authentication Failed");
-				response.setStatus(false);
+				response.setMensaje("Authentication Failed");
+				response.setEstado(false);
 			}
 
 			tr.setMethod("checkout");
 			tr.setType("INPUT");
 			tr.setTokenid(tokenRepository.findByToken(interfaz.getToken()));
 			tr.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-			tr.setMessage(response.getMessage());
+			tr.setMessage(response.getMensaje());
 			trRepository.save(tr);
 
 		} catch (Exception ex) {
@@ -223,6 +234,7 @@ public class InterfazController extends BaseBean {
 		Token tk = new Token();
 		Transaction tr = new Transaction();
 
+		
 		ResponseCheckinSend response = new ResponseCheckinSend();
 		try {
 
@@ -239,7 +251,31 @@ public class InterfazController extends BaseBean {
 		System.out.println("checkin().response " + response);
 		return new ResponseEntity(response, HttpStatus.OK);
 	}
+	
+	
+	
+	public void connection(){
+		try {
+			RequestCheckinWS checkin = new RequestCheckinWS();
+			Gson gson = new Gson();
+			checkin.setUser("eautomatizadohematologia");
+			checkin.setPassword("34ut0m4t1z4d0");		
+						
+			String resp = new ConnectionAPI().soapURLConnection(gson.toJson(checkin), Constans.NAME_SERVICE_CHECKIN);
+			System.out.println("hhhhhhhhhhhhhhh: "+resp);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (SAXException e) {
+			e.printStackTrace();
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		}
+	}
 
+	public static void main(String[] args) {
+		new InterfazController().connection();
+	}
+	
 	@RequestMapping(value = "/acceptMessage_send", method = RequestMethod.POST)
 	public ResponseEntity acceptMessageSend(@RequestBody RequestSend interfaz) {
 		System.out.println("acceptMessage - RequestBody " + interfaz);
