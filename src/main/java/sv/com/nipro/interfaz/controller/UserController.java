@@ -1,5 +1,6 @@
 package sv.com.nipro.interfaz.controller;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.List;
@@ -70,7 +71,7 @@ public class UserController extends BaseBean implements Serializable{
 				
 				ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
 				logger.info(context.getRequestContextPath());
-				FacesContext.getCurrentInstance().getExternalContext().redirect("prueba");
+				FacesContext.getCurrentInstance().getExternalContext().redirect("main");
 				
 			}else{
 				MessageUtil.addErrorMessage("Usuario o contraseña incorrectos");
@@ -78,6 +79,18 @@ public class UserController extends BaseBean implements Serializable{
 			
 		} catch (Exception e) {
 			logger.error(e, e);
+		}
+	}
+	
+	public void loguot() {
+		beanSession.setToken(null);
+		beanSession.setUserInSession(null);
+		
+		try {
+			FacesContext.getCurrentInstance().getExternalContext().redirect("/");
+		} catch (IOException e) {
+			logger.error(e, e);
+			e.printStackTrace();
 		}
 	}
 	

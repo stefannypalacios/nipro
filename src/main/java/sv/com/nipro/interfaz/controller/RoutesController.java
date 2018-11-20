@@ -11,7 +11,7 @@ public class RoutesController {
 		return "login";
 	}
 	
-	@GetMapping("/prueba")
+	@GetMapping("/main")
 	public String prueba() {
 		return "transaction";
 	}
