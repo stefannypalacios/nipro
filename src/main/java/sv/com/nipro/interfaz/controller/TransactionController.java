@@ -16,6 +16,7 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 
 import org.apache.log4j.Logger;
+import org.primefaces.PrimeFaces;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -115,6 +116,9 @@ public class TransactionController extends BaseBean implements Serializable{
 	                .baseUrl(BASE_URL)
 	                .addConverterFactory(GsonConverterFactory.create())
 	                .build();
+			
+			//TODO: ELiminar
+			PrimeFaces.current().executeScript("PF('progress').show();");
 			
 		} catch (Exception e) {
 			logger.error(e, e);
