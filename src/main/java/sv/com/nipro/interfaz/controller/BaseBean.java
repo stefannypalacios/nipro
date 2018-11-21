@@ -7,6 +7,7 @@ import java.sql.Timestamp;
 
 import javax.faces.bean.ManagedBean;
 
+import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.Minutes;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,8 @@ import sv.com.nipro.interfaz.repository.TokenRepository;
 
 @ManagedBean(name = "BaseBean")
 public class BaseBean {
+	private static final Logger logger = Logger.getLogger(BaseBean.class);
+	
 	@Autowired
 	public TokenRepository tokenService;
 
@@ -47,7 +50,7 @@ public class BaseBean {
 					return (numberOfMinutes < validMinutes);
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(e, e);
 			}
 		}
 		return false;
@@ -84,5 +87,21 @@ public class BaseBean {
 		} catch (NoSuchAlgorithmException e) {
 			return false;
 		}
+	}
+	
+	public String getChecksum(String origin){
+		String result = "";
+		try {
+			
+			MessageDigest md = MessageDigest.getInstance("MD5");
+			md.update(origin.getBytes());
+			byte[] digest = md.digest();
+			result = new BigInteger(1, digest).toString(16);
+			
+		} catch (Exception e) {
+			logger.error(e, e);
+		}
+		
+		return result;
 	}
 }

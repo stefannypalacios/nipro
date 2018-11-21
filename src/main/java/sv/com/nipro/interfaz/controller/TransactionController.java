@@ -19,7 +19,20 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.GsonConverterFactory;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import sv.com.nipro.api.Endpoints;
+import sv.com.nipro.api.request.CheckoutRequest;
+import sv.com.nipro.api.request.MessageRequest;
+import sv.com.nipro.api.request.UsuarioRequest;
+import sv.com.nipro.api.response.CheckoutResponse;
+import sv.com.nipro.api.response.MessageResponse;
+import sv.com.nipro.api.response.UsuarioResponse;
 import sv.com.nipro.interfaz.dto.Hl7DTO;
+import sv.com.nipro.interfaz.dto.ResponseAcceptMessageSend;
 import sv.com.nipro.interfaz.entities.Archive;
 import sv.com.nipro.interfaz.entities.Archivehl7;
 import sv.com.nipro.interfaz.entities.Element;
@@ -27,6 +40,7 @@ import sv.com.nipro.interfaz.entities.Transaction;
 import sv.com.nipro.interfaz.repository.ArchiveRepository;
 import sv.com.nipro.interfaz.repository.Archivehl7Repository;
 import sv.com.nipro.interfaz.repository.ElementRepository;
+import sv.com.nipro.interfaz.repository.ParameterRepository;
 import sv.com.nipro.interfaz.repository.TransactionRepository;
 import sv.com.nipro.interfaz.utils.Constans;
 import sv.com.nipro.interfaz.utils.MessageUtil;
@@ -49,6 +63,8 @@ public class TransactionController extends BaseBean implements Serializable{
 	@Autowired
 	private ElementRepository elementRpty;
 	@Autowired
+	private ParameterRepository parameterRpty;
+	@Autowired
 	private SessionController session;
 	
 	private List<Transaction> lstTransaction;
@@ -60,16 +76,49 @@ public class TransactionController extends BaseBean implements Serializable{
 	private List<Archivehl7> lstArchiveHl7;
 	private Archive selectedArchive;
 	private List<Element> lstElements = new ArrayList<Element>();
+	private String tokenRest;
+	private Hl7DTO currentHl7;
 	
+	//api
+	private Retrofit retrofit;
+	private UsuarioRequest usuarioRequest;
+	private MessageRequest messageRequest;
+	private CheckoutRequest checkoutRequest;
+    private UsuarioResponse usuarioResponse;
+    private MessageResponse messageResponse;
+    private CheckoutResponse checkoutResponse;
+    private Endpoints endpointsInterface;
+    
+    private String BASE_URL;
+	private String USER;
+	private String PASSWORD;
+	//end api
 	
 	@PostConstruct
 	public void init() {
 		logger.info("******************TransactionController init*********************");
-		fillTransactionLst();
-		fillArchives();
-		fillArchivesHl7();
 		
-		lstElements = elementRpty.findAll();
+		try {
+			fillTransactionLst();
+			fillArchives();
+			fillArchivesHl7();
+			
+			lstElements = elementRpty.findAll();
+			
+			BASE_URL = parameterRpty.findByCode("BASE_URL").getValue();
+			USER = parameterRpty.findByCode("USER_API").getValue();
+			PASSWORD = parameterRpty.findByCode("PASSWORD_API").getValue();
+			
+			endpointsInterface = retrofit.create(Endpoints.class); //api
+			
+			retrofit = new Retrofit.Builder()
+	                .baseUrl(BASE_URL)
+	                .addConverterFactory(GsonConverterFactory.create())
+	                .build();
+			
+		} catch (Exception e) {
+			logger.error(e, e);
+		}	
 		
 		//lstTransaction.get(0).getArchiveList();
 		System.out.println("**TEST***");
@@ -79,6 +128,7 @@ public class TransactionController extends BaseBean implements Serializable{
 		}else if (session == null) {
 			logger.info("*****Session null*****");
 		}
+		
 	}
 
 	public void fillTransactionLst() {
@@ -126,10 +176,12 @@ public class TransactionController extends BaseBean implements Serializable{
 	}
 	
 	public void sendHl7() {
+		
 		Hl7DTO dto = new Hl7DTO();
 		
 		Path currentRelativePath = Paths.get("");
 		try {
+			
 			File file = new File(currentRelativePath.toString() + "/hl7/" + hl7Selected.getName());
 			File solicitud = new File(currentRelativePath.toString() + "/solicitudes/" + selectedArchive.getName());
 			BufferedReader br = new BufferedReader(new FileReader(file)); 
@@ -155,12 +207,14 @@ public class TransactionController extends BaseBean implements Serializable{
 			    count++;
 			  }
 			  dto.setOBXLlst(lstOBX);
+			  br.close(); // ??
 			  
 			  br = new BufferedReader(new FileReader(solicitud));
 			  String[] dataSolicitud = new String[1];
 			  while ((st = br.readLine()) != null) {
 				  dataSolicitud = st.split("_z");
 			  }
+			  br.close(); // ??
 			  
 			  String[] suministrante = dataSolicitud[0].split("\\|")[5].split("\\^"); 
 			  
@@ -179,8 +233,9 @@ public class TransactionController extends BaseBean implements Serializable{
 			dto.setOBR(dto.getOBR().replace("{EMPLEADO}", session.getUserInSession().getEmployeeList().get(0).getName()
 					+ " " + session.getUserInSession().getEmployeeList().get(0).getSurname()));
 			
-			//TODO: Agregar envío 
-			
+			//TODO: Agregar envío
+			currentHl7 = dto;
+			apiCheckin();
 			
 		} catch (Exception e) {
 			logger.error(e,e);
@@ -236,6 +291,85 @@ public class TransactionController extends BaseBean implements Serializable{
 		}
 		return false;
 	}
+	
+	//Api methods
+	private void apiCheckin(){
+		
+		usuarioRequest = new UsuarioRequest(USER, PASSWORD);
+		Call<UsuarioResponse> checkinCallResponse = endpointsInterface.checkin(usuarioRequest);
+		
+		checkinCallResponse.enqueue(new Callback<UsuarioResponse>() {
+			
+			@Override
+			public void onResponse(Call<UsuarioResponse> call, Response<UsuarioResponse> response) {
+				usuarioResponse = response.body();
+				if (usuarioResponse != null && usuarioResponse.estado){
+					tokenRest = usuarioResponse.token;
+					apiAcceptMessage();
+				}
+			}
+			
+			@Override
+			public void onFailure(Call<UsuarioResponse> call, Throwable t) {
+				MessageUtil.addErrorMessage("ERROR:", "No se pudo establecer la conexión con el servicio");
+				logger.error(t, t);
+			}
+		});
+	}
+	
+	
+	public void apiAcceptMessage(){
+		
+		messageRequest = new MessageRequest(tokenRest, currentHl7.getHL7(), getChecksum(currentHl7.getHL7()));
+		Call<MessageResponse> messageCallResponse = endpointsInterface.acceptMessage(messageRequest);
+		
+		messageCallResponse.enqueue(new Callback<MessageResponse>() {
+
+			@Override
+			public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
+				messageResponse = response.body();
+				if (messageResponse != null && messageResponse.Estado){
+					MessageUtil.addSuccessMessage("Éxito:", "Resultados enviados correctamente");
+				}else{
+					MessageUtil.addErrorMessage("ERROR:", messageResponse.Mensaje);
+				}
+				
+			}
+			
+			@Override
+			public void onFailure(Call<MessageResponse> call, Throwable t) {
+				MessageUtil.addErrorMessage("ERROR:", "No se pudo establecer la conexión con el servicio");
+				logger.error(t, t);
+			}
+			
+		});
+		
+	}
+	
+	
+	public void apiCheckout(){
+		checkoutRequest = new CheckoutRequest(tokenRest);
+		Call<CheckoutResponse> checkoutCallResponse = endpointsInterface.checkout(checkoutRequest);
+		
+		checkoutCallResponse.enqueue(new Callback<CheckoutResponse>() {
+
+			@Override
+			public void onResponse(Call<CheckoutResponse> call, Response<CheckoutResponse> response) {
+				checkoutResponse = response.body();
+				if (checkoutResponse.Estado){
+					logger.info("Sesión finalizada");
+				}
+			}
+			
+			@Override
+			public void onFailure(Call<CheckoutResponse> call, Throwable t) {
+				MessageUtil.addErrorMessage("ERROR:", "No se pudo establecer la conexión con el servicio");
+				logger.error(t, t);
+				
+			}
+		});
+	}
+	//End Api methods
 	
 	
 	public Archivehl7 getHl7Selected() {
