@@ -1,7 +1,9 @@
 package sv.com.nipro.interfaz.controller;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.Serializable;
 import java.nio.file.Path;
@@ -27,6 +29,7 @@ import sv.com.nipro.interfaz.repository.Archivehl7Repository;
 import sv.com.nipro.interfaz.repository.ElementRepository;
 import sv.com.nipro.interfaz.repository.TransactionRepository;
 import sv.com.nipro.interfaz.utils.Constans;
+import sv.com.nipro.interfaz.utils.MessageUtil;
 import sv.com.nipro.interfaz.utils.XMLProcessor;
 
 
@@ -55,6 +58,7 @@ public class TransactionController extends BaseBean implements Serializable{
 	private String method = "";
 	private Archivehl7 hl7Selected;
 	private List<Archivehl7> lstArchiveHl7;
+	private Archive selectedArchive;
 	private List<Element> lstElements = new ArrayList<Element>();
 	
 	
@@ -121,6 +125,71 @@ public class TransactionController extends BaseBean implements Serializable{
 		logger.info("**********************");
 	}
 	
+	public void sendHl7() {
+		Hl7DTO dto = new Hl7DTO();
+		
+		Path currentRelativePath = Paths.get("");
+		try {
+			File file = new File(currentRelativePath.toString() + "/hl7/" + hl7Selected.getName());
+			File solicitud = new File(currentRelativePath.toString() + "/solicitudes/" + selectedArchive.getName());
+			BufferedReader br = new BufferedReader(new FileReader(file)); 
+			
+			String st; 
+			int count = 1;
+			List<String> lstOBX = new ArrayList<String>();
+			  while ((st = br.readLine()) != null) {
+				  switch (count) {
+				case 1:
+					dto.setMSH(st);
+					break;
+				case 2:
+					dto.setORC(st);
+					break;
+				case 3:
+					dto.setOBR(st);
+					break;
+				default:
+					lstOBX.add(st);
+					break;
+				}
+			    count++;
+			  }
+			  dto.setOBXLlst(lstOBX);
+			  
+			  br = new BufferedReader(new FileReader(solicitud));
+			  String[] dataSolicitud = new String[1];
+			  while ((st = br.readLine()) != null) {
+				  dataSolicitud = st.split("_z");
+			  }
+			  
+			  String[] suministrante = dataSolicitud[0].split("\\|")[5].split("\\^"); 
+			  
+			dto.setMSH(dto.getMSH().replace("{SUMINISTRANTE_ID}", suministrante[0]));
+			dto.setMSH(dto.getMSH().replace("{SUMINISTRANTE}", suministrante[1]));
+			
+			
+			dto.setORC(dto.getORC().replace("{COD_EMPLEADO}",
+					session.getUserInSession().getEmployeeList().get(0).getCode()));
+			dto.setORC(dto.getORC().replace("{EMPLEADO}", session.getUserInSession().getEmployeeList().get(0).getName()
+					+ " " + session.getUserInSession().getEmployeeList().get(0).getSurname()));
+			
+			
+			dto.setOBR(dto.getOBR().replace("{COD_EMPLEADO}",
+					session.getUserInSession().getEmployeeList().get(0).getCode()));
+			dto.setOBR(dto.getOBR().replace("{EMPLEADO}", session.getUserInSession().getEmployeeList().get(0).getName()
+					+ " " + session.getUserInSession().getEmployeeList().get(0).getSurname()));
+			
+			//TODO: Agregar envío 
+			
+			
+		} catch (Exception e) {
+			logger.error(e,e);
+			MessageUtil.addErrorMessage("ERROR:", "Hubo un problema al procesar el archivo");			
+		}
+		
+		
+	}
+	
 	public void readArchive() {
 		List<Hl7DTO> lstHl7Dto = new ArrayList<Hl7DTO>();
 		XMLProcessor xml = new XMLProcessor();
@@ -141,7 +210,7 @@ public class TransactionController extends BaseBean implements Serializable{
 
 						// Creating archive
 						Path currentRelativePath = Paths.get("");
-						File fileHl7 = new File(currentRelativePath.toAbsolutePath().toString() + archive.getName());
+						File fileHl7 = new File(currentRelativePath.toAbsolutePath().toString() + "/hl7/" + archive.getName());
 						
 						BufferedWriter bw;
 						
@@ -178,6 +247,7 @@ public class TransactionController extends BaseBean implements Serializable{
 	}
 	
 	public void sendSolicitude(Archive arc) {
+		selectedArchive = arc;
 		logger.info(arc.toString());
 	}
 	
