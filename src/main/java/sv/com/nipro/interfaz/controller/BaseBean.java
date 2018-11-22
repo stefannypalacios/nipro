@@ -10,6 +10,7 @@ import javax.faces.bean.ManagedBean;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.Minutes;
+import org.primefaces.PrimeFaces;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import sv.com.nipro.interfaz.entities.Token;
@@ -103,5 +104,17 @@ public class BaseBean {
 		}
 		
 		return result;
+	}
+	
+	public void showProgress(boolean visible) {
+		if (visible) {
+			PrimeFaces.current().executeScript("PF('progress').show();");
+		}else {
+			PrimeFaces.current().executeScript("PF('progress').hide();");
+		}
+	}
+	
+	public void showMessages() {
+		PrimeFaces.current().executeScript("PF('message').show();");
 	}
 }

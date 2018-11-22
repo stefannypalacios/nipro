@@ -14,6 +14,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
+import javax.faces.context.FacesContext;
 
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
@@ -106,20 +107,21 @@ public class TransactionController extends BaseBean implements Serializable{
 			
 			lstElements = elementRpty.findAll();
 			
+			/*
 			BASE_URL = parameterRpty.findByCode("BASE_URL").getValue();
 			USER = parameterRpty.findByCode("USER_API").getValue();
-			PASSWORD = parameterRpty.findByCode("PASSWORD_API").getValue();
+			PASSWORD = parameterRpty.findByCode("PASSWORD_API").getValue();			
 			
-			endpointsInterface = retrofit.create(Endpoints.class); //api
 			
 			retrofit = new Retrofit.Builder()
 	                .baseUrl(BASE_URL)
 	                .addConverterFactory(GsonConverterFactory.create())
 	                .build();
 			
-			//TODO: ELiminar
-			PrimeFaces.current().executeScript("PF('progress').show();");
-			
+			endpointsInterface = retrofit.create(Endpoints.class); //api
+			*/
+			//TODO: ELiminar			
+						
 		} catch (Exception e) {
 			logger.error(e, e);
 		}	
@@ -298,6 +300,7 @@ public class TransactionController extends BaseBean implements Serializable{
 	
 	//Api methods
 	private void apiCheckin(){
+		showProgress(true);
 		
 		usuarioRequest = new UsuarioRequest(USER, PASSWORD);
 		Call<UsuarioResponse> checkinCallResponse = endpointsInterface.checkin(usuarioRequest);
@@ -317,6 +320,7 @@ public class TransactionController extends BaseBean implements Serializable{
 			public void onFailure(Call<UsuarioResponse> call, Throwable t) {
 				MessageUtil.addErrorMessage("ERROR:", "No se pudo establecer la conexión con el servicio");
 				logger.error(t, t);
+				showProgress(false);
 			}
 		});
 	}
@@ -337,13 +341,14 @@ public class TransactionController extends BaseBean implements Serializable{
 				}else{
 					MessageUtil.addErrorMessage("ERROR:", messageResponse.Mensaje);
 				}
-				
+				showProgress(false);
 			}
 			
 			@Override
 			public void onFailure(Call<MessageResponse> call, Throwable t) {
 				MessageUtil.addErrorMessage("ERROR:", "No se pudo establecer la conexión con el servicio");
 				logger.error(t, t);
+				showProgress(false);
 			}
 			
 		});
@@ -387,6 +392,9 @@ public class TransactionController extends BaseBean implements Serializable{
 	public void sendSolicitude(Archive arc) {
 		selectedArchive = arc;
 		logger.info(arc.toString());
+		//PrimeFaces.current().executeScript("PF('progress').show();");
+		MessageUtil.addErrorMessage("ERROR:", "No se pudo establecer la conexión con el servicio");
+		showMessages();
 	}
 	
 	public List<Archive> getLstArchives() {

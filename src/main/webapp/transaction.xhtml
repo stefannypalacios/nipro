@@ -92,9 +92,22 @@
 			</p:tab>			
 		</p:tabView>
 	
-		<p:dialog header="Procesando" widgetVar="progress" modal="true" height="100" width="400" closable="false">
-		    <p:progressBar id="progressBarIndeterminate" style="height:10px" mode="indeterminate"/>
-		</p:dialog>  
+		<p:dialog header="Procesando" widgetVar="progress" modal="true" height="50" width="400" closable="false" resizable="false">
+		    <p:progressBar id="progressBarIndeterminate" style="height:10px; margin-top: 10px;" mode="indeterminate"/>
+		</p:dialog>
+		
+		<p:dialog header="Info" widgetVar="message" modal="true" height="120" width="400" closable="false" resizable="false">
+		    <p:messages id="messages" showDetail="true" closable="true" style="font-size: 12px">
+		        <p:autoUpdate />
+		    </p:messages>
+		    <div class="ui-g">
+			    <div class="ui-g-4"></div>
+			    <div class="ui-g-4"><p:commandButton value="Aceptar" type="button" onclick="PF('message').hide();" /></div>
+			    <div class="ui-g-4"></div>
+			</div>
+		    
+		</p:dialog>
+		    
 	</ui:define>
 </ui:composition>
 </html>
