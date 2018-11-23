@@ -8,6 +8,12 @@
 	xmlns:p="http://primefaces.org/ui">
 <ui:composition template="layout.xhtml">
 	<ui:define name="content">
+	 <h:form id="frmControl" style="width: 100%;">
+	 	<h:panelGrid columns="1" style="width: 100%; text-align: right;">
+	 		<p:commandButton value="Leer resultados" type="button" actionListener="#{transactionController.sendSolicitude(obj)}" />
+	 		<p:commandButton value="Cerrar sesión" type="button" onclick="PF('message').hide();" />
+	 	</h:panelGrid>
+	 </h:form>
 		<p:tabView>
 			<p:tab title="Envío de resultados">
 				<ui:include src="sendHl7.xhtml" />
@@ -79,12 +85,6 @@
 							<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
 						</h:outputText>
 					</p:column>
-					<!--  
-					<p:column>
-						<f:facet name="header">Acciones</f:facet>
-						<p:commandButton value="Detalle" type="button" onclick="#{transactionController.prueba(obj)}" />
-					</p:column>
-					-->
 				</p:dataTable>
 			</p:panel>
 		</h:form>
@@ -106,6 +106,29 @@
 			    <div class="ui-g-4"></div>
 			</div>
 		    
+		</p:dialog>
+		
+		<p:dialog header="Envío de resultados" widgetVar="sending" modal="true" width="500" resizable="false">
+			<h:form id="frmSend">
+				<h:panelGrid columns="2" style="width: 100%;">
+					<h:outputText value = "Seleccione el resultado correspondiente para esta solicitud" />
+					<h:outputText value = "" />
+					
+					<h:outputLabel value="Resultados" for="sltResultados" />
+				 	<p:selectOneMenu id="sltResultados" value="#{transactionController.idSelected}"
+				 	style="width:60%">
+				 		<f:selectItem itemLabel="Seleccione uno" itemValue="0" />
+					 	<f:selectItems value="#{transactionController.lstArchiveHl7}"
+						var="archive" itemLabel="#{archive.resultid}"
+						itemValue="#{archive.archivehl7id}" />
+						
+						<p:ajax listener="#{transactionController.onSelectedArch}" />
+					</p:selectOneMenu>
+					
+					<p:commandButton value="Aceptar" type="button" actionListener="#{transactionController.sendHl7}"
+					oncomplete="PF('sending').hide();" />
+				</h:panelGrid>
+			</h:form>
 		</p:dialog>
 		    
 	</ui:define>

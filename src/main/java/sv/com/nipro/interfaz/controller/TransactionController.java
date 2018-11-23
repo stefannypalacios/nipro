@@ -80,6 +80,7 @@ public class TransactionController extends BaseBean implements Serializable{
 	private List<Element> lstElements = new ArrayList<Element>();
 	private String tokenRest;
 	private Hl7DTO currentHl7;
+	private Integer idSelected;
 	
 	//api
 	private Retrofit retrofit;
@@ -182,7 +183,7 @@ public class TransactionController extends BaseBean implements Serializable{
 	}
 	
 	public void sendHl7() {
-		
+		showProgress(true);
 		Hl7DTO dto = new Hl7DTO();
 		
 		Path currentRelativePath = Paths.get("");
@@ -245,21 +246,24 @@ public class TransactionController extends BaseBean implements Serializable{
 			
 		} catch (Exception e) {
 			logger.error(e,e);
-			MessageUtil.addErrorMessage("ERROR:", "Hubo un problema al procesar el archivo");			
+			MessageUtil.addErrorMessage("ERROR:", "Hubo un problema al procesar el archivo");
+			showProgress(false);
+			showMessages();
 		}
 		
 		
 	}
 	
 	public void readArchive() {
+		showProgress(true);
 		List<Hl7DTO> lstHl7Dto = new ArrayList<Hl7DTO>();
 		XMLProcessor xml = new XMLProcessor();
 		lstHl7Dto = xml.processXML(Constans.FILE_PATH, lstElements);
 
-		if (lstHl7Dto != null) {
-			for (Hl7DTO dto : lstHl7Dto) {
-				try {
-					
+		try {
+			if (lstHl7Dto != null) {
+				for (Hl7DTO dto : lstHl7Dto) {
+
 					if (!validateArchive(dto.getResultId())) {
 						Archivehl7 archive = new Archivehl7();
 						archive.setResultid(dto.getResultId());
@@ -271,20 +275,30 @@ public class TransactionController extends BaseBean implements Serializable{
 
 						// Creating archive
 						Path currentRelativePath = Paths.get("");
-						File fileHl7 = new File(currentRelativePath.toAbsolutePath().toString() + "/hl7/" + archive.getName());
-						
+						File fileHl7 = new File(
+								currentRelativePath.toAbsolutePath().toString() + "/hl7/" + archive.getName());
+
 						BufferedWriter bw;
-						
+
 						bw = new BufferedWriter(new FileWriter(fileHl7));
 						bw.write(dto.getHL7());
 						bw.close();
-					}				
-					
-				} catch (Exception e) {
-					logger.error(e, e);
+					}
+
 				}
+
+				fillArchivesHl7();
+				MessageUtil.addSuccessMessage("", "Lectura de resultados completa");
+				showProgress(false);
+				showMessages();				
+				
 			}
 
+		} catch (Exception e) {
+			logger.error(e, e);
+			MessageUtil.addErrorMessage("ERROR: ", "Ocurrió un problema en la lectura de los resultados");
+			showProgress(false);
+			showMessages();
 		}
 
 	}
@@ -298,9 +312,19 @@ public class TransactionController extends BaseBean implements Serializable{
 		return false;
 	}
 	
+	public void onSelectedArch(){
+		if (idSelected != null){
+			for (Archivehl7 archivehl7 : lstArchiveHl7) {
+				if (archivehl7.getArchivehl7id().equals(idSelected)){
+					hl7Selected = archivehl7;
+					break;
+				}
+			}
+		}
+	}
+	
 	//Api methods
 	private void apiCheckin(){
-		showProgress(true);
 		
 		usuarioRequest = new UsuarioRequest(USER, PASSWORD);
 		Call<UsuarioResponse> checkinCallResponse = endpointsInterface.checkin(usuarioRequest);
@@ -321,6 +345,7 @@ public class TransactionController extends BaseBean implements Serializable{
 				MessageUtil.addErrorMessage("ERROR:", "No se pudo establecer la conexión con el servicio");
 				logger.error(t, t);
 				showProgress(false);
+				showMessages();
 			}
 		});
 	}
@@ -341,6 +366,7 @@ public class TransactionController extends BaseBean implements Serializable{
 				}else{
 					MessageUtil.addErrorMessage("ERROR:", messageResponse.Mensaje);
 				}
+				showMessages();
 				showProgress(false);
 			}
 			
@@ -349,6 +375,7 @@ public class TransactionController extends BaseBean implements Serializable{
 				MessageUtil.addErrorMessage("ERROR:", "No se pudo establecer la conexión con el servicio");
 				logger.error(t, t);
 				showProgress(false);
+				showMessages();
 			}
 			
 		});
@@ -373,6 +400,7 @@ public class TransactionController extends BaseBean implements Serializable{
 			@Override
 			public void onFailure(Call<CheckoutResponse> call, Throwable t) {
 				MessageUtil.addErrorMessage("ERROR:", "No se pudo establecer la conexión con el servicio");
+				showMessages();
 				logger.error(t, t);
 				
 			}
@@ -392,9 +420,16 @@ public class TransactionController extends BaseBean implements Serializable{
 	public void sendSolicitude(Archive arc) {
 		selectedArchive = arc;
 		logger.info(arc.toString());
-		//PrimeFaces.current().executeScript("PF('progress').show();");
-		MessageUtil.addErrorMessage("ERROR:", "No se pudo establecer la conexión con el servicio");
-		showMessages();
+		
+		PrimeFaces.current().executeScript("PF('sending').show();");
+	}
+	
+	public Archive getSelectedArchive() {
+		return selectedArchive;
+	}
+	
+	public void setSelectedArchive(Archive selectedArchive) {
+		this.selectedArchive = selectedArchive;
 	}
 	
 	public List<Archive> getLstArchives() {
@@ -423,6 +458,14 @@ public class TransactionController extends BaseBean implements Serializable{
 	
 	public void setMethod(String method) {
 		this.method = method;
+	}
+	
+	public Integer getIdSelected() {
+		return idSelected;
+	}
+	
+	public void setIdSelected(Integer idSelected) {
+		this.idSelected = idSelected;
 	}
 
 }
