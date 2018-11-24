@@ -109,7 +109,7 @@ public class TransactionController extends BaseBean implements Serializable{
 			
 			lstElements = elementRpty.findAll();
 			
-			/*
+			
 			BASE_URL = parameterRpty.findByCode("BASE_URL").getValue();
 			USER = parameterRpty.findByCode("USER_API").getValue();
 			PASSWORD = parameterRpty.findByCode("PASSWORD_API").getValue();			
@@ -121,8 +121,7 @@ public class TransactionController extends BaseBean implements Serializable{
 	                .build();
 			
 			endpointsInterface = retrofit.create(Endpoints.class); //api
-			*/
-			//TODO: ELiminar			
+						
 						
 		} catch (Exception e) {
 			logger.error(e, e);
