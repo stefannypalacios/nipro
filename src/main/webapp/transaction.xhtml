@@ -10,8 +10,8 @@
 	<ui:define name="content">
 	 <h:form id="frmControl" style="width: 100%;">
 	 	<h:panelGrid columns="1" style="width: 100%; text-align: right;">
-	 		<p:commandButton value="Leer resultados" type="button" actionListener="#{transactionController.sendSolicitude(obj)}" />
-	 		<p:commandButton value="Cerrar sesión" type="button" onclick="PF('message').hide();" />
+	 		<p:commandButton value="Leer resultados" type="button" actionListener="#{transactionController.readArchive}" />
+	 		<p:commandButton value="Cerrar sesión" type="button" actionListener="#{transactionController.destroySession}" />
 	 	</h:panelGrid>
 	 </h:form>
 		<p:tabView>

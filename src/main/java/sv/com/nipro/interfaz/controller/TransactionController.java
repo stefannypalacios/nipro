@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -422,6 +423,18 @@ public class TransactionController extends BaseBean implements Serializable{
 		logger.info(arc.toString());
 		
 		PrimeFaces.current().executeScript("PF('sending').show();");
+	}
+	
+	public void destroySession() {
+		session.setUserInSession(null);
+		session.setToken(null);
+		
+		try {
+			FacesContext.getCurrentInstance().getExternalContext().redirect("/");
+		} catch (IOException e) {
+			logger.error(e, e);
+			e.printStackTrace();
+		}
 	}
 	
 	public Archive getSelectedArchive() {
