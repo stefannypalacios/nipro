@@ -9,10 +9,16 @@
 <ui:composition template="layout.xhtml">
 	<ui:define name="content">
 	 <h:form id="frmControl" style="width: 100%;">
-	 	<h:panelGrid columns="1" style="width: 100%; text-align: right;">
-	 		<p:commandButton value="Leer resultados" type="button" actionListener="#{transactionController.readArchive}" />
-	 		<p:commandButton value="Cerrar sesión" type="button" actionListener="#{transactionController.destroySession}" />
-	 	</h:panelGrid>
+	 	<div class="ui-g">
+ 			<div class="ui-g-12">
+ 				<p:commandButton value="Cerrar sesión" type="submit" 
+		 		actionListener="#{transactionController.destroySession}" style="float: right;"
+		 		ajax="false" />
+ 				<p:commandButton value="Leer resultados" type="submit" 
+		 		actionListener="#{transactionController.readArchive}" style="float: right;"
+		 		ajax="false"/>		 		
+ 			</div>
+ 		</div> 		
 	 </h:form>
 		<p:tabView>
 			<p:tab title="Envío de resultados">
@@ -125,7 +131,7 @@
 						<p:ajax listener="#{transactionController.onSelectedArch}" />
 					</p:selectOneMenu>
 					
-					<p:commandButton value="Aceptar" type="button" actionListener="#{transactionController.sendHl7}"
+					<p:commandButton value="Aceptar" type="submit" actionListener="#{transactionController.sendHl7}"
 					oncomplete="PF('sending').hide();" />
 				</h:panelGrid>
 			</h:form>

@@ -57,7 +57,7 @@ public class Hl7DTO {
 				HL7 += obx;
 			}
 		}
-		
+		System.out.println(HL7);
 		return HL7;
 	}
 	

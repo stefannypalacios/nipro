@@ -258,9 +258,9 @@ public class TransactionController extends BaseBean implements Serializable{
 		showProgress(true);
 		List<Hl7DTO> lstHl7Dto = new ArrayList<Hl7DTO>();
 		XMLProcessor xml = new XMLProcessor();
-		lstHl7Dto = xml.processXML(Constans.FILE_PATH, lstElements);
-
 		try {
+			lstHl7Dto = xml.processXML(Constans.FILE_PATH, lstElements);
+			
 			if (lstHl7Dto != null) {
 				for (Hl7DTO dto : lstHl7Dto) {
 
@@ -281,7 +281,18 @@ public class TransactionController extends BaseBean implements Serializable{
 						BufferedWriter bw;
 
 						bw = new BufferedWriter(new FileWriter(fileHl7));
-						bw.write(dto.getHL7());
+						bw.write(dto.getMSH());
+						bw.newLine();
+						bw.write(dto.getORC());
+						bw.newLine();
+						bw.write(dto.getOBR());
+						if (dto.getOBXLlst() != null){
+							for (String obx : dto.getOBXLlst()) {
+								bw.newLine();
+								bw.write(obx);
+							}
+						}
+						bw.flush();
 						bw.close();
 					}
 
@@ -305,7 +316,7 @@ public class TransactionController extends BaseBean implements Serializable{
 	
 	public Boolean validateArchive(String resultId) {
 
-		Archivehl7 archivehl7 = archiveHl7Rpty.findByResultid(resultId);
+		Archivehl7 archivehl7 = archiveHl7Rpty.findByResultid(resultId.trim());
 		if (archivehl7 != null && archivehl7.getArchivehl7id() != null) {
 			return true;
 		}
@@ -434,6 +445,14 @@ public class TransactionController extends BaseBean implements Serializable{
 			logger.error(e, e);
 			e.printStackTrace();
 		}
+	}
+	
+	public List<Archivehl7> getLstArchiveHl7() {
+		return lstArchiveHl7;
+	}
+	
+	public void setLstArchiveHl7(List<Archivehl7> lstArchiveHl7) {
+		this.lstArchiveHl7 = lstArchiveHl7;
 	}
 	
 	public Archive getSelectedArchive() {

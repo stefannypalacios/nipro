@@ -27,7 +27,7 @@ public class ParameterRepositoryImpl implements ParameterRepositoryCustom {
 		Parameter item = new Parameter();
 
 		try {
-			query = em.createNamedQuery("Parameter.findByCode", Archive.class);
+			query = em.createNamedQuery("Parameter.findByCode", Parameter.class);
 			query.setParameter("code", code);
 			item = (Parameter) query.getSingleResult();
 			

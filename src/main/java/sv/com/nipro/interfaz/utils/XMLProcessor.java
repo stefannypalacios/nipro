@@ -23,7 +23,7 @@ import sv.com.nipro.interfaz.entities.Employee;
 
 @Component
 public class XMLProcessor {
-	private List<Hl7DTO> lstHl7; 
+	private List<Hl7DTO> lstHl7 = new ArrayList<Hl7DTO>(); 
 	
 	public List<Hl7DTO> processXML(String path, List<Element> lstElements) {
 		Samples object = null;
