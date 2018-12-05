@@ -24,6 +24,7 @@ import sv.com.nipro.interfaz.entities.Element;
 import sv.com.nipro.interfaz.repository.ArchiveRepository;
 import sv.com.nipro.interfaz.repository.Archivehl7Repository;
 import sv.com.nipro.interfaz.repository.ElementRepository;
+import sv.com.nipro.interfaz.repository.ParameterRepository;
 import sv.com.nipro.interfaz.utils.Constans;
 import sv.com.nipro.interfaz.utils.XMLProcessor;
 
@@ -42,14 +43,19 @@ public class SendHl7Controller extends BaseBean implements Serializable {
 	private ElementRepository elementRpst;
 	@Autowired
 	private SessionController session;
+	@Autowired
+	private ParameterRepository parameterRpty;
 
 	private List<Archive> lstArchives = new ArrayList<Archive>();
 	private List<Archivehl7> lstArchivesHl7 = new ArrayList<Archivehl7>();
 	private List<Element> lstElements = new ArrayList<Element>();
+	
+    private String FILE_PATH;
 
 	@PostConstruct
 	public void init() {
 		fillList();
+		FILE_PATH = parameterRpty.findByCode("FILE_PATH").getValue();
 	}
 
 	private void fillList() {
@@ -61,7 +67,7 @@ public class SendHl7Controller extends BaseBean implements Serializable {
 	private void readArchive() {
 		List<Hl7DTO> lstHl7Dto = new ArrayList<Hl7DTO>();
 		XMLProcessor xml = new XMLProcessor();
-		lstHl7Dto = xml.processXML(Constans.FILE_PATH, lstElements);
+		lstHl7Dto = xml.processXML(FILE_PATH, lstElements);
 
 		if (lstHl7Dto != null) {
 			for (Hl7DTO dto : lstHl7Dto) {

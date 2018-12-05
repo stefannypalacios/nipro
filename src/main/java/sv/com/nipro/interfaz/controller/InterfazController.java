@@ -3,7 +3,6 @@ package sv.com.nipro.interfaz.controller;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
@@ -11,8 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,13 +20,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.xml.sax.SAXException;
-
-import com.google.gson.Gson;
 
 import sv.com.nipro.interfaz.dto.RequestAcceptMessage;
 import sv.com.nipro.interfaz.dto.RequestCheckin;
-import sv.com.nipro.interfaz.dto.RequestCheckinWS;
 import sv.com.nipro.interfaz.dto.RequestCheckout;
 import sv.com.nipro.interfaz.dto.Response;
 import sv.com.nipro.interfaz.dto.ResponseCheckin;
@@ -40,7 +33,6 @@ import sv.com.nipro.interfaz.entities.User;
 import sv.com.nipro.interfaz.repository.TokenRepository;
 import sv.com.nipro.interfaz.repository.TransactionRepository;
 import sv.com.nipro.interfaz.repository.UserRepository;
-import sv.com.nipro.interfaz.utils.ConnectionAPI;
 import sv.com.nipro.interfaz.utils.Constans;
 import sv.com.nipro.interfaz.utils.PasswordUtils;
 import sv.com.nipro.interfaz.utils.TokenGenerator;
@@ -222,70 +214,6 @@ public class InterfazController extends BaseBean {
 		return new ResponseEntity(response, HttpStatus.OK);
 	}
 
-	public void checkinWS(){
-		try {
-			RequestCheckinWS checkin = new RequestCheckinWS();
-			ConnectionAPI api = new ConnectionAPI();
-			Gson gson = new Gson();
-			checkin.setUser("eautomatizadohematologia");
-			checkin.setPassword("34ut0m4t1z4d0");
-			String msg = api.soapMessageCheckin(gson.toJson(checkin));
-
-			String resp = new ConnectionAPI().soapURLConnection(msg, Constans.NAME_SERVICE_CHECKIN);
-			System.out.println("checkinWS: "+resp);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (SAXException e) {
-			e.printStackTrace();
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public void acceptMessageWS(){
-		try {
-			RequestCheckinWS checkin = new RequestCheckinWS();
-			ConnectionAPI api = new ConnectionAPI();
-			Gson gson = new Gson();
-			checkin.setUser("eautomatizadohematologia");
-			checkin.setPassword("34ut0m4t1z4d0");
-			String msg = api.soapMessageCheckin(gson.toJson(checkin));
-						
-			String resp = api.soapURLConnection(msg, Constans.NAME_SERVICE_ACCEPTMESSAGE);
-			System.out.println("acceptMessageWS: "+resp);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (SAXException e) {
-			e.printStackTrace();
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public void checkoutWS(){
-		try {
-			RequestCheckinWS checkin = new RequestCheckinWS();
-			ConnectionAPI api = new ConnectionAPI();
-			Gson gson = new Gson();
-			checkin.setUser("eautomatizadohematologia");
-			checkin.setPassword("34ut0m4t1z4d0");
-			String msg = api.soapMessageCheckin(gson.toJson(checkin));
-												
-			String resp = new ConnectionAPI().soapURLConnection(msg, Constans.NAME_SERVICE_CHECKOUT);
-			System.out.println("checkoutWS: "+resp);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (SAXException e) {
-			e.printStackTrace();
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public static void main(String[] args) {
-		new InterfazController().checkinWS();
-	}	
-	
 	
 	@GetMapping("/user")
 	public List<User> user() {

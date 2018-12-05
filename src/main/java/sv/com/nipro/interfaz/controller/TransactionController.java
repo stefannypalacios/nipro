@@ -96,6 +96,7 @@ public class TransactionController extends BaseBean implements Serializable{
     private String BASE_URL;
 	private String USER;
 	private String PASSWORD;
+	private String FILE_PATH;
 	//end api
 	
 	@PostConstruct
@@ -112,7 +113,8 @@ public class TransactionController extends BaseBean implements Serializable{
 			
 			BASE_URL = parameterRpty.findByCode("BASE_URL").getValue();
 			USER = parameterRpty.findByCode("USER_API").getValue();
-			PASSWORD = parameterRpty.findByCode("PASSWORD_API").getValue();			
+			PASSWORD = parameterRpty.findByCode("PASSWORD_API").getValue();		
+			FILE_PATH = parameterRpty.findByCode("FILE_PATH").getValue();
 			
 			
 			retrofit = new Retrofit.Builder()
@@ -259,7 +261,7 @@ public class TransactionController extends BaseBean implements Serializable{
 		List<Hl7DTO> lstHl7Dto = new ArrayList<Hl7DTO>();
 		XMLProcessor xml = new XMLProcessor();
 		try {
-			lstHl7Dto = xml.processXML(Constans.FILE_PATH, lstElements);
+			lstHl7Dto = xml.processXML(FILE_PATH, lstElements);
 			
 			if (lstHl7Dto != null) {
 				for (Hl7DTO dto : lstHl7Dto) {
