@@ -97,6 +97,8 @@ public class TransactionController extends BaseBean implements Serializable{
 	private String USER;
 	private String PASSWORD;
 	private String FILE_PATH;
+	private String DIR_HL7;
+	private String DIR_SOLICITUD;
 	//end api
 	
 	@PostConstruct
@@ -115,6 +117,8 @@ public class TransactionController extends BaseBean implements Serializable{
 			USER = parameterRpty.findByCode("USER_API").getValue();
 			PASSWORD = parameterRpty.findByCode("PASSWORD_API").getValue();		
 			FILE_PATH = parameterRpty.findByCode("FILE_PATH").getValue();
+			DIR_HL7 = parameterRpty.findByCode("DIR_HL7").getValue();
+			DIR_SOLICITUD = parameterRpty.findByCode("DIR_SOLICITUD").getValue();
 			
 			
 			retrofit = new Retrofit.Builder()
@@ -191,8 +195,8 @@ public class TransactionController extends BaseBean implements Serializable{
 		Path currentRelativePath = Paths.get("");
 		try {
 			
-			File file = new File(currentRelativePath.toString() + "/hl7/" + hl7Selected.getName());
-			File solicitud = new File(currentRelativePath.toString() + "/solicitudes/" + selectedArchive.getName());
+			File file = new File(DIR_HL7 + hl7Selected.getName());
+			File solicitud = new File(DIR_SOLICITUD + selectedArchive.getName());
 			BufferedReader br = new BufferedReader(new FileReader(file)); 
 			
 			String st; 
@@ -277,8 +281,7 @@ public class TransactionController extends BaseBean implements Serializable{
 
 						// Creating archive
 						Path currentRelativePath = Paths.get("");
-						File fileHl7 = new File(
-								currentRelativePath.toAbsolutePath().toString() + "/hl7/" + archive.getName());
+						File fileHl7 = new File(DIR_HL7 + archive.getName());
 
 						BufferedWriter bw;
 
@@ -340,7 +343,7 @@ public class TransactionController extends BaseBean implements Serializable{
 	private void apiCheckin(){
 		
 		usuarioRequest = new UsuarioRequest(USER, PASSWORD);
-		Call<UsuarioResponse> checkinCallResponse = endpointsInterface.checkin(usuarioRequest);
+		Call<UsuarioResponse> checkinCallResponse = endpointsInterface.checkin(USER, PASSWORD);
 		
 		checkinCallResponse.enqueue(new Callback<UsuarioResponse>() {
 			
@@ -398,7 +401,7 @@ public class TransactionController extends BaseBean implements Serializable{
 	
 	public void apiCheckout(){
 		checkoutRequest = new CheckoutRequest(tokenRest);
-		Call<CheckoutResponse> checkoutCallResponse = endpointsInterface.checkout(checkoutRequest);
+		Call<CheckoutResponse> checkoutCallResponse = endpointsInterface.checkout(tokenRest);
 		
 		checkoutCallResponse.enqueue(new Callback<CheckoutResponse>() {
 

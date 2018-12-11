@@ -4,6 +4,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
 import sv.com.nipro.api.request.CheckoutRequest;
 import sv.com.nipro.api.request.MessageRequest;
 import sv.com.nipro.api.request.UsuarioRequest;
@@ -14,11 +15,11 @@ import sv.com.nipro.api.response.UsuarioResponse;
 public interface Endpoints {
 	
 	@GET("checkin")
-    Call<UsuarioResponse> checkin(@Body UsuarioRequest usuarioRequest);
+    Call<UsuarioResponse> checkin(@Query("AppUser") String AppUser, @Query("Password") String Password);
 	
 	@POST("acceptMessage")
 	Call<MessageResponse> acceptMessage(@Body MessageRequest messageRequest);
 	
 	@GET("checkout")
-	Call<CheckoutResponse> checkout(@Body CheckoutRequest checkoutRequest);
+	Call<CheckoutResponse> checkout(@Query("token") String token);
 }
